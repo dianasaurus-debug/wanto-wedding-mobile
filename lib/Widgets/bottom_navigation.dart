@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dream_wedding_app/booking_screen.dart';
 import 'package:dream_wedding_app/home_screen.dart';
 import 'package:dream_wedding_app/jasa_screen.dart';
+import 'package:dream_wedding_app/katalog_screen.dart';
 import 'package:dream_wedding_app/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   final List _widgetOptions = [
     HomeScreen(),
     JasaScreen(),
-    BookingScreen(),
+    KatalogScreen(),
     ProfileScreen(),
   ];
 
@@ -54,7 +55,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             BottomNavigationBarItem(
               icon: Icon(Icons.notes, color: Colors.black),
               backgroundColor: Colors.grey,
-                activeIcon: Icon(Icons.notifications, color: Color(0xff80cbc4), size: 32),
+                activeIcon: Icon(Icons.notes, color: Color(0xff80cbc4), size: 32),
                 label : 'Vendor'
             ),
             BottomNavigationBarItem(

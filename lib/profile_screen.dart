@@ -87,7 +87,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                           //   width: 22,
                           // ),
                           SizedBox(width: 20),
-                          Expanded(child: Text('Akun saya')),
+                          Expanded(child: Text('Akun saya', style: TextStyle(fontSize: 17))),
                           Icon(Icons.arrow_forward_ios),
                         ],
                       ),
