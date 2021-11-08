@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dream_wedding_app/Models/bank_account.dart';
-import 'package:dream_wedding_app/konfirmasi_bayar.dart';
+import 'package:dream_wedding_app/Screens/konfirmasi_bayar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
