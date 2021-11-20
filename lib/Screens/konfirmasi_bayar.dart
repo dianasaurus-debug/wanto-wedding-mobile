@@ -1,23 +1,30 @@
 import 'dart:io';
 
 import 'package:dream_wedding_app/Models/bank_account.dart';
+import 'package:dream_wedding_app/Models/vendor.dart';
 import 'package:dream_wedding_app/Widgets/bottom_navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 
 class KonfirmasiBayarScreen extends StatefulWidget {
+  final Vendor vendor;
+  final BankAccount bank_account;
+  const KonfirmasiBayarScreen({Key? key, required this.vendor, required this.bank_account}) : super(key: key);
   @override
   _KonfirmasiBayarScreenState createState() => _KonfirmasiBayarScreenState();
 }
 
 class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
+  final formatCurrency = new NumberFormat.simpleCurrency(locale: 'id_ID');
+
   @override
   void initState() {
     // TODO: implement initState
   }
 
-  BankAccount bankAccount = new BankAccount(1,'Bank Mandiri', '119190191091', 'https://img2.pngdownload.id/20180815/ab/kisspng-bank-mandiri-depok-logo-bank-mandiri-semarang-kred-5b74ed29b6a585.5966533915343895457481.jpg', 'Adelle');
+  BankAccount bankAccount = new BankAccount(1,'Bank Mandiri', '119190191091', 'Adelle');
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +77,7 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                           children : [
                             Text('Nama Jasa', style: TextStyle(color: Colors.grey)),
                             SizedBox(height: 5),
-                            Text('Paket Gold',  style: TextStyle(
+                            Text(widget.vendor.nama,  style: TextStyle(
                                 color: Color(0xff80cbc4),
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold)),
@@ -82,7 +89,7 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                             children : [
                               Text('Jenis Jasa', style: TextStyle(color: Colors.grey)),
                               SizedBox(height: 5),
-                              Text('Paket Lengkap',  style: TextStyle(
+                              Text(widget.vendor.nama_kategori,  style: TextStyle(
                                   color: Color(0xff80cbc4),
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold)),
@@ -94,7 +101,7 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                             children : [
                               Text('Harga Total Jasa', style: TextStyle(color: Colors.grey)),
                               SizedBox(height: 5),
-                              Text('Rp. 40.000.000',  style: TextStyle(
+                              Text(formatCurrency.format(int.parse(widget.vendor.harga)),  style: TextStyle(
                                   color: Color(0xff80cbc4),
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold)),
@@ -109,7 +116,7 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                             children : [
                               Text('Nominal DP', style: TextStyle(color: Colors.grey)),
                               SizedBox(height: 5),
-                              Text('Rp. 50.000',  style: TextStyle(
+                              Text(formatCurrency.format(int.parse(widget.vendor.nominal_dp)),  style: TextStyle(
                                   color: Color(0xff80cbc4),
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold)),
@@ -139,15 +146,11 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                                   children: [
                                     Row(children: [
                                       Text('Nama Bank : ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
-                                      Text('${bankAccount.nama_bank}',
+                                      Text('${widget.bank_account.nama_bank}',
                                           style: TextStyle(
                                               color: Color(0xff80cbc4),
                                               fontSize: 15
-                                          )),
-                                      SizedBox(width: 5),
-                                      Image.network(
-                                        bankAccount.logo_bank,
-                                        width: 50,
+                                          )
                                       ),
                                     ]
                                     ),
@@ -157,7 +160,7 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                                             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                                             children: <TextSpan>[
                                               TextSpan(
-                                                  text: '${bankAccount.acc_holder}',
+                                                  text: '${widget.bank_account.acc_holder}',
                                                   style: TextStyle(
                                                       color: Color(0xff80cbc4),
                                                       fontSize: 15))
@@ -170,7 +173,7 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                                             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                                             children: <TextSpan>[
                                               TextSpan(
-                                                  text: '${bankAccount.nomor_rekening}',
+                                                  text: '${widget.bank_account.nomor_rekening}',
                                                   style: TextStyle(
                                                       color: Color(0xff80cbc4),
                                                       fontSize: 15))

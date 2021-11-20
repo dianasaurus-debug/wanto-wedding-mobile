@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:dream_wedding_app/Controllers/katalog.dart';
+import 'package:dream_wedding_app/Models/katalog.dart';
+import 'package:dream_wedding_app/Utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -11,9 +14,10 @@ class KatalogScreen extends StatefulWidget {
 }
 
 class _KatalogScreenState extends State<KatalogScreen> {
+  late Future<List<Katalog>> futureKatalog;
   @override
   void initState() {
-    // TODO: implement initState
+    futureKatalog = KatalogNetwork().getKatalog();
   }
 
   List<String> imageList = [
@@ -61,11 +65,16 @@ class _KatalogScreenState extends State<KatalogScreen> {
       ),
       body: Container(
         margin: EdgeInsets.all(12),
-        child: StaggeredGridView.countBuilder(
+        child:
+        FutureBuilder<List<Katalog>>(
+    future: futureKatalog,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return StaggeredGridView.countBuilder(
             crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 12,
-            itemCount: imageList.length,
+            itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               return
                 Container(
@@ -74,7 +83,7 @@ class _KatalogScreenState extends State<KatalogScreen> {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage(imageList[index])
+                            image: NetworkImage(IMG_URL_KATALOG+snapshot.data![index].cover)
                         ),
                         color: Colors.transparent,
                         borderRadius: BorderRadius.all(
@@ -88,7 +97,7 @@ class _KatalogScreenState extends State<KatalogScreen> {
                             borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15))
                         ),
                         padding: EdgeInsets.all(10.0), //some spacing to the child from bottom
-                        child: Text('Gaun Pernikahan', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold), textAlign: TextAlign.center,)
+                        child: Text('${snapshot.data![index].judul}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold), textAlign: TextAlign.center,)
                     )
                 );
               //   Container(
@@ -108,7 +117,14 @@ class _KatalogScreenState extends State<KatalogScreen> {
             },
             staggeredTileBuilder: (index) {
               return StaggeredTile.count(1, index.isEven ? 1.2 : 1.8);
-            }),
+            }
+            );
+      } else if (snapshot.hasError) {
+        return Text("${snapshot.error}");
+      }
+      return CircularProgressIndicator();
+    })
+
       ),
     );
   }

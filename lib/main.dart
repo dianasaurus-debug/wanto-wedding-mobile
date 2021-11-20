@@ -1,4 +1,4 @@
-import 'package:dream_wedding_app/splash_screen.dart';
+import 'package:dream_wedding_app/Screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 void main(){

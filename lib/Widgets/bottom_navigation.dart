@@ -1,11 +1,11 @@
 
 import 'dart:io';
 
-import 'package:dream_wedding_app/booking_screen.dart';
-import 'package:dream_wedding_app/home_screen.dart';
-import 'package:dream_wedding_app/jasa_screen.dart';
-import 'package:dream_wedding_app/katalog_screen.dart';
-import 'package:dream_wedding_app/profile_screen.dart';
+import 'package:dream_wedding_app/Screens/booking_screen.dart';
+import 'package:dream_wedding_app/Screens/home_screen.dart';
+import 'package:dream_wedding_app/Screens/jasa_screen.dart';
+import 'package:dream_wedding_app/Screens/katalog_screen.dart';
+import 'package:dream_wedding_app/Screens/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

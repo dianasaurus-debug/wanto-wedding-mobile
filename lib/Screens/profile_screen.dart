@@ -1,10 +1,10 @@
-import 'package:dream_wedding_app/Widgets/bottom_navigation.dart';
-import 'package:dream_wedding_app/Widgets/profile_menu.dart';
-import 'package:dream_wedding_app/Widgets/profile_pic.dart';
-import 'package:dream_wedding_app/home_screen.dart';
-import 'package:dream_wedding_app/register_screen.dart';
-import 'package:flutter/gestures.dart';
+
+import 'dart:convert';
+
+import 'package:dream_wedding_app/Controllers/auth.dart';
+import 'package:dream_wedding_app/Screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -14,6 +14,17 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
+  late String nama_depan;
+  _loadUserData() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = jsonDecode(localStorage.getString('user'));
+
+    if(user != null) {
+      setState(() {
+        nama_depan = user['nama_depan'];
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,7 +204,9 @@ class ProfileScreenState extends State<ProfileScreen> {
                             borderRadius: BorderRadius.circular(15)),
                         backgroundColor: Color(0xFFF5F6F9),
                       ),
-                      onPressed: () {},
+                      onPressed: (){
+                        logout();
+                      },
                       child: Row(
                         children: [
                           Icon(
@@ -217,5 +230,18 @@ class ProfileScreenState extends State<ProfileScreen> {
               ),
               color: Colors.white,
             )));
+  }
+  void logout() async {
+    var res = await AuthNetwork().postData({'test' : 'halo'}, '/logout');
+    var body = json.decode(res.body);
+    print(body);
+    if(body['success']){
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      localStorage.remove('user');
+      localStorage.remove('token');
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context)=>LoginScreen()));
+    }
   }
 }

@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:dream_wedding_app/Widgets/bottom_navigation.dart';
-import 'package:dream_wedding_app/login_screen.dart';
+import 'package:dream_wedding_app/Screens/login_screen.dart';
 import 'package:dream_wedding_app/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:dream_wedding_app/home_screen.dart';
+import 'package:dream_wedding_app/Screens/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -13,9 +14,21 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  bool isAuth = false;
   @override
   void initState() {
+    _checkIfLoggedIn();
     super.initState();
+  }
+
+  void _checkIfLoggedIn() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+    if(token != null){
+      setState(() {
+        isAuth = true;
+      });
+    }
   }
 
   @override
@@ -65,10 +78,18 @@ class _SplashScreenState extends State<SplashScreen> {
                     backgroundColor: Color(0xff80cbc4),
                   ),
                   onPressed: () => {
+                  if (isAuth) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => BottomNavigation()),
+                    )
+                  } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => LoginScreen()),
                     )
+                  }
+
                   },
                   child: Text(
                     "Lanjutkan",
