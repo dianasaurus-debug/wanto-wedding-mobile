@@ -138,17 +138,17 @@ class LoginScreenState extends State<LoginScreen> {
                               RichText(
                                 text: TextSpan(children: [
                                   TextSpan(
-                                      text: 'Sudah punya akun? ',
+                                      text: 'Belum punya akun? ',
                                       style: TextStyle(
                                           color: Colors.grey)),
                                   TextSpan(
-                                      text: 'Login',
+                                      text: 'Daftar',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold, color: Colors.grey,),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
                                           Route route = MaterialPageRoute(
-                                              builder: (context) => LoginScreen());
+                                              builder: (context) => RegisterScreen());
                                           Navigator.push(context, route);
                                         }),
                                 ]),
@@ -205,7 +205,7 @@ class LoginScreenState extends State<LoginScreen> {
     print(data);
     if(body['success']){
       SharedPreferences localStorage = await SharedPreferences.getInstance();
-      localStorage.setString('token', json.encode(body['access_token']));
+      localStorage.setString('token', json.encode(body['access_token'])); //Simpan token di local storage
       localStorage.setString('user', json.encode(body['data']));
       Navigator.push(
         context,

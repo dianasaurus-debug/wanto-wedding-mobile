@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dream_wedding_app/utils/constants.dart';
@@ -30,6 +31,31 @@ class AuthNetwork{
         headers: _setHeaders()
     );
   }
+
+  updateProfile(String file, data, apiUrl) async {
+    var fullUrl = API_URL + apiUrl;
+    await _getToken();
+    Map<String,String> headers={
+      "Authorization":"Bearer $token",
+      "Content-type": "multipart/form-data",
+      "Accept" : "application/json",
+    };
+    var request = http.MultipartRequest(
+      'POST', Uri.parse(fullUrl),
+
+    );
+    request.files.add(
+        await http.MultipartFile.fromPath('photo', file)
+    );
+    request.headers.addAll(headers);
+    request.fields.addAll(data);
+    var res = await request.send();
+    var responseString = await res.stream.bytesToString();
+    print(responseString);
+    return responseString;
+  }
+
+
 
   getData(apiUrl) async {
     var fullUrl = API_URL + apiUrl;

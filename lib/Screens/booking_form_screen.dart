@@ -144,36 +144,40 @@ class _BookingFormState extends State<BookingForm> {
                           ),
                         ),
                         SizedBox(width: 5),
-                        Padding(
-                            padding: EdgeInsets.fromLTRB(5, 10, 0, 10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(widget.vendor.nama,
-                                    style: TextStyle(fontSize: 18)),
-                                SizedBox(height: 10),
-                                Text(
-                                    formatCurrency
-                                        .format(int.parse(widget.vendor.harga)),
-                                    style: TextStyle(
-                                        color: Color(0xff80cbc4),
-                                        fontSize: 15)),
-                              ],
-                            )),
+                        Expanded(
+                          child:Padding(
+                              padding: EdgeInsets.fromLTRB(5, 10, 0, 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(widget.vendor.nama,
+                                      style: TextStyle(fontSize: 17)),
+                                  SizedBox(height: 10),
+                                  Text(
+                                      formatCurrency
+                                          .format(int.parse(widget.vendor.harga)),
+                                      style: TextStyle(
+                                          color: Color(0xff80cbc4),
+                                          fontSize: 15)),
+                                ],
+                              )),
+                        )
                       ],
                     ),
                     Divider(
                       color: Color(0xff80cbc4),
                     ),
                     SizedBox(height: 8),
-                    Row(
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children:[
                         Text('Pilih Tanggal',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18)),
                         Text(' (pastikan 1 bulan setelah hari ini)',
-                            style: TextStyle(fontSize: 15, color: Colors.red)),
+                              style: TextStyle(fontSize: 15, color: Colors.red)),
                       ]
                     ),
                     SizedBox(
@@ -197,8 +201,8 @@ class _BookingFormState extends State<BookingForm> {
                               onShowPicker: (context, currentValue) async {
                                 final date = await showDatePicker(
                                     context: context,
-                                    firstDate: DateTime(1900),
-                                    initialDate: currentValue ?? DateTime.now(),
+                                    firstDate: DateTime.now().add(Duration(days: 31)),
+                                    initialDate: currentValue ?? DateTime.now().add(Duration(days: 31)),
                                     lastDate: DateTime(2100));
                                 if (date != null) {
                                   final time = await showTimePicker(
@@ -260,8 +264,8 @@ class _BookingFormState extends State<BookingForm> {
                               onShowPicker: (context, currentValue) async {
                                 final date = await showDatePicker(
                                     context: context,
-                                    firstDate: DateTime(1900),
-                                    initialDate: currentValue ?? DateTime.now(),
+                                    firstDate: DateTime.now().add(Duration(days: 31)),
+                                    initialDate: currentValue ?? DateTime.now().add(Duration(days: 31)),
                                     lastDate: DateTime(2100));
                                 if (date != null) {
                                   final time = await showTimePicker(
@@ -474,14 +478,14 @@ class _BookingFormState extends State<BookingForm> {
     'nominal' : widget.vendor.nominal_dp,
     'bank_account_id' : bank_account_id,
     };
-    print(data);
     var res = await AuthNetwork().postData(data, '/booking/pesan');
     var body = json.decode(res.body);
+    print(body);
     if(body['success']){
       Navigator.push(
         context,
         new MaterialPageRoute(
-            builder: (context) => KonfirmasiBayarScreen(vendor : widget.vendor, bank_account : selected_bank_account)
+            builder: (context) => KonfirmasiBayarScreen(id_booking : body['data']['id'])
         ),
       );
     } else {

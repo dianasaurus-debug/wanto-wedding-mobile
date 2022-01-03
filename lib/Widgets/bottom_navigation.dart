@@ -1,7 +1,6 @@
 
 import 'dart:io';
 
-import 'package:dream_wedding_app/Screens/booking_screen.dart';
 import 'package:dream_wedding_app/Screens/home_screen.dart';
 import 'package:dream_wedding_app/Screens/jasa_screen.dart';
 import 'package:dream_wedding_app/Screens/katalog_screen.dart';

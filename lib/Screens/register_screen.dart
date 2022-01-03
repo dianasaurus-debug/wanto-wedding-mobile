@@ -22,6 +22,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   var password;
   var nama_depan;
   var nama_belakang;
+  var alamat;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,7 +167,28 @@ class RegisterScreenState extends State<RegisterScreen> {
                                                   hintStyle: TextStyle(color: Colors.grey),
                                                   border: InputBorder.none),
                                             ),
-                                          )
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom:
+                                                    BorderSide(color: Color(0xFFEEEEEE)))),
+                                            child: TextFormField(
+                                              maxLines: 3,
+                                              validator: (alamatValue) {
+                                                if (alamatValue!.isEmpty) {
+                                                  return 'Please enter some text';
+                                                }
+                                                alamat = alamatValue;
+                                                return null;
+                                              },
+                                              decoration: InputDecoration(
+                                                  hintText: "Masukkan alamat",
+                                                  hintStyle: TextStyle(color: Colors.grey),
+                                                  border: InputBorder.none),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -238,7 +260,8 @@ class RegisterScreenState extends State<RegisterScreen> {
       'email' : email,
       'password': password,
       'nama_depan': nama_depan,
-      'nama_belakang': nama_belakang
+      'nama_belakang': nama_belakang,
+      'alamat' : alamat
     };
 
     var res = await AuthNetwork().authData(data, '/register');

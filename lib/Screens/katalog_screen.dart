@@ -39,19 +39,7 @@ class _KatalogScreenState extends State<KatalogScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
-        title: Container(
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(20)),
-          child: TextFormField(
-            decoration: InputDecoration(
-              icon: Icon(CupertinoIcons.search, color: Color(0xff80cbc4)),
-              border: InputBorder.none,
-              hintText: 'Cari',
-              // contentPadding:
-              //     EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-            ),
-          ),
-        ),
+        title: Text('Katalog', style: TextStyle(color: Colors.black),),
         actions: [
           IconButton(
               icon:

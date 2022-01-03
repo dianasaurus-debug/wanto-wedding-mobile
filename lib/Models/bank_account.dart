@@ -1,11 +1,11 @@
 class BankAccount {
-  final String nama_bank;
-  final String nomor_rekening;
-  final String acc_holder;
-  final int id;
+  late String nama_bank;
+  late String nomor_rekening;
+  late String acc_holder;
+  late int id;
 
 
-  BankAccount(this.id, this.nama_bank,this.nomor_rekening,this.acc_holder);
+  BankAccount({this.id = 0, this.nama_bank = '',this.nomor_rekening = '',this.acc_holder = ''});
 
   BankAccount.fromJson(Map<String, dynamic> json)
       : nama_bank = json['nama_bank'],

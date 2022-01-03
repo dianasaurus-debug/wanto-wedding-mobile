@@ -5,6 +5,7 @@ import 'package:dream_wedding_app/Controllers/vendor.dart';
 import 'package:dream_wedding_app/Models/vendor.dart';
 import 'package:dream_wedding_app/Screens/booking_form_screen.dart';
 import 'package:dream_wedding_app/Screens/detail_jasa_screen.dart';
+import 'package:dream_wedding_app/Widgets/app_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dream_wedding_app/Utils/constants.dart';
@@ -30,33 +31,10 @@ class _JasaScreenState extends State<JasaScreen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          title: Container(
-            decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            child: TextFormField(
-              decoration: InputDecoration(
-                icon: Icon(CupertinoIcons.search, color: Color(0xff80cbc4)),
-                border: InputBorder.none,
-                hintText: 'Cari',
-                // contentPadding:
-                //     EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-              ),
-            ),
-          ),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.notifications_outlined,
-                    color: Color(0xff80cbc4)),
-                onPressed: () {}),
-            IconButton(
-                icon: Icon(Icons.shopping_cart_outlined,
-                    color: Color(0xff80cbc4)),
-                onPressed: () {}),
-          ],
+        appBar: BaseAppBar(
+          appBar: AppBar(),
         ),
+
         body: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(20, 20, 0, 20),
           child: Column(
@@ -115,26 +93,24 @@ class _JasaScreenState extends State<JasaScreen> {
                                                               crossAxisAlignment:
                                                               CrossAxisAlignment.start,
                                                               children: [
-                                                                Row(
-                                                                    mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                        '${snapshot.data![index].nama}',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                            Colors.black,
-                                                                            fontSize: 17),
-                                                                      ),
-                                                                      Text(
-                                                                        formatCurrency.format(int.parse(snapshot.data![index].harga)),
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                            Colors.green,
-                                                                            fontSize: 15),
-                                                                      ),
-                                                                    ]),
+                                                                Text(
+                                                                    '${snapshot.data![index].nama}',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                        Colors.black,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 17),
+                                                                  ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text(
+                                                                      formatCurrency.format(int.parse(snapshot.data![index].harga)),
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                          Colors.green,
+                                                                          fontSize: 15),
+                                                                    ),
                                                                 SizedBox(
                                                                   height: 10,
                                                                 ),
@@ -240,27 +216,24 @@ class _JasaScreenState extends State<JasaScreen> {
                                                               crossAxisAlignment:
                                                               CrossAxisAlignment.start,
                                                               children: [
-                                                                Row(
-                                                                    mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                        '${snapshot.data![index].nama}',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                            Colors.black,
-                                                                            fontSize: 17),
-                                                                      ),
-                                                                      Text(
-
-                                                                        formatCurrency.format(int.parse(snapshot.data![index].harga)),
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                            Colors.green,
-                                                                            fontSize: 15),
-                                                                      ),
-                                                                    ]),
+                                                                Text(
+                                                                  '${snapshot.data![index].nama}',
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontWeight: FontWeight.bold,
+                                                                      fontSize: 17),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text(
+                                                                  formatCurrency.format(int.parse(snapshot.data![index].harga)),
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                      Colors.green,
+                                                                      fontSize: 15),
+                                                                ),
                                                                 SizedBox(
                                                                   height: 5,
                                                                 ),
@@ -366,26 +339,24 @@ class _JasaScreenState extends State<JasaScreen> {
                                                           crossAxisAlignment:
                                                           CrossAxisAlignment.start,
                                                           children: [
-                                                            Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                    '${snapshot.data![index].nama}',
-                                                                    style: TextStyle(
-                                                                        color:
-                                                                        Colors.black,
-                                                                        fontSize: 17),
-                                                                  ),
-                                                                  Text(
-                                                                    formatCurrency.format(int.parse(snapshot.data![index].harga)),
-                                                                    style: TextStyle(
-                                                                        color:
-                                                                        Colors.green,
-                                                                        fontSize: 15),
-                                                                  ),
-                                                                ]),
+                                                            Text(
+                                                              '${snapshot.data![index].nama}',
+                                                              style: TextStyle(
+                                                                  color:
+                                                                  Colors.black,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 17),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text(
+                                                              formatCurrency.format(int.parse(snapshot.data![index].harga)),
+                                                              style: TextStyle(
+                                                                  color:
+                                                                  Colors.green,
+                                                                  fontSize: 15),
+                                                            ),
                                                             SizedBox(
                                                               height: 5,
                                                             ),
@@ -491,26 +462,24 @@ class _JasaScreenState extends State<JasaScreen> {
                                                               crossAxisAlignment:
                                                               CrossAxisAlignment.start,
                                                               children: [
-                                                                Row(
-                                                                    mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                        '${snapshot.data![index].nama}',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                            Colors.black,
-                                                                            fontSize: 17),
-                                                                      ),
-                                                                      Text(
-                                                                        formatCurrency.format(int.parse(snapshot.data![index].harga)),
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                            Colors.green,
-                                                                            fontSize: 15),
-                                                                      ),
-                                                                    ]),
+                                                                Text(
+                                                                  '${snapshot.data![index].nama}',
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontWeight: FontWeight.bold,
+                                                                      fontSize: 17),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text(
+                                                                  formatCurrency.format(int.parse(snapshot.data![index].harga)),
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                      Colors.green,
+                                                                      fontSize: 15),
+                                                                ),
                                                                 SizedBox(
                                                                   height: 5,
                                                                 ),
