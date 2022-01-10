@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class BookingForm extends StatefulWidget {
   final Vendor vendor;
@@ -489,7 +490,22 @@ class _BookingFormState extends State<BookingForm> {
         ),
       );
     } else {
-      print(body['message']);
+      Alert(
+        context: context,
+        type: AlertType.error,
+        title: "Pemesanan Gagal!",
+        desc: "Pastikan tanggal pemesanan sesuai (harus lebih dari 1 bulan setelah hari ini).",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () => Navigator.pop(context),
+            width: 120,
+          )
+        ],
+      ).show();
     }
   }
 }

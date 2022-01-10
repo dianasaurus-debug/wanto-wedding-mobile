@@ -73,9 +73,9 @@ class BookingNetwork {
     );
     Dio dio = new Dio();
     var headers = {
-      'content-type': 'application/json',
       'accept': 'application/json',
       'authorization': 'Bearer $token',
+      'Content-Type': 'multipart/form-data'
     };
     var response = await dio.post(fullUrl, data: formData, options: Options(method: "POST", headers: headers));
     return response.data;

@@ -14,6 +14,7 @@ class Vendor {
   late String kind;
   late String rating_mean;
   late List<Review>? reviews = [];
+  late int is_ordered = 0;
 
   Vendor({
     this.id = 0 ,
@@ -25,7 +26,8 @@ class Vendor {
     this.nominal_dp = '',
     this.nama_kategori = '',
     this.kind = '',
-    this.rating_mean = '0'
+    this.is_ordered = 0,
+    this.rating_mean = ''
 
 }) : this.galeries = [];
 
@@ -39,8 +41,9 @@ class Vendor {
         reviews = json["reviews"] == null ? [] : List<Review>.from(json["reviews"].map((x) => new Review.fromJson(x))),
         nominal_dp = json['nominal_dp'],
         deskripsi = json['deskripsi'],
-        kind = json['kind'],
-        rating_mean = json['rating_mean'],
+        is_ordered = json.containsKey('is_ordered') ? json['is_ordered'] : null,
+        kind = json.containsKey('kind') ? json['kind'] : null,
+        rating_mean = json['rating_mean'].toString(),
         nama_kategori = json['category']['nama_kategori'];
 
   Map<String, dynamic> toJson() => {

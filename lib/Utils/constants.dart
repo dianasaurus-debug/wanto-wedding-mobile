@@ -5,18 +5,18 @@ const IMG_URL = 'http://192.168.43.204:8000/images/uploads/';
 const IMG_URL_KATALOG = 'http://192.168.43.204:8000/images/uploads/katalog/';
 const IMG_URL_VENDOR = 'http://192.168.43.204:8000/images/uploads/vendor/';
 const IMG_URL_BUKTI = 'http://192.168.43.204:8000/images/bukti_pembayaran/';
-const verifications = ['','Terverifikasi', 'Belum diverifikasi'];
-const verification_color = [Colors.green,Colors.green,Colors.yellow];
+const verifications = ['','Terverifikasi', 'Belum diverifikasi','Dibatalkan'];
+const verification_color = [Colors.green,Colors.green,Colors.yellow, Colors.red];
 const status_booking = [
  'Belum Bayar DP',
  'Menunggu verifikasi DP',
  'Menunggu pembayaran Pelunasan',
-'Menunggu verifikasi pelunasan',
+ 'Menunggu verifikasi pelunasan',
  'Pelunasan terverifikasi',
-'Dibatalkan',
-'Event berlangsung',
-'Event selesai, menunggu rating',
-'Sudah dirate',
+  'Dibatalkan',
+  'Event berlangsung',
+  'Event selesai, menunggu rating',
+  'Sudah dirate',
 ];
 const status_color = [
   Colors.blueGrey,

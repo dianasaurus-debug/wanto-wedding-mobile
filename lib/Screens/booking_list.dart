@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:rating_dialog/rating_dialog.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BookingList extends StatefulWidget {
@@ -27,6 +28,10 @@ class _BookingListState extends State<BookingList> {
     futureListBooking = BookingNetwork().getAllBookings();
   }
 
+  Future<List<Booking>> _refreshProducts(BuildContext context) async {
+    return futureListBooking;
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -40,195 +45,240 @@ class _BookingListState extends State<BookingList> {
       ),
 
     ),
-      body: FutureBuilder<List<Booking>>(
-          future: futureListBooking,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  padding: EdgeInsets.all(10),
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DetailBooking(
-                                    idBooking: snapshot.data![index].id)),
-                          );
-                        },
-                        child: Card(
-                            child: Padding(
-                                padding: EdgeInsets.all(10),
-                                child: ListTile(
-                                  title:
-                                      Text(snapshot.data![index].vendor.nama),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
+      body:
+    RefreshIndicator(
+    onRefresh: () => _refreshProducts(context),
+    child:FutureBuilder<List<Booking>>(
+        future: futureListBooking,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                padding: EdgeInsets.all(10),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailBooking(
+                                  idBooking: snapshot.data![index].id)),
+                        );
+                      },
+                      child: Card(
+                          child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: ListTile(
+                                title:
+                                Text(snapshot.data![index].vendor.nama),
+                                subtitle: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                        'DP : ${formatCurrency.format(int.parse(snapshot.data![index].vendor.nominal_dp))}'),
+                                    SizedBox(
+                                      height: 2,
+                                    ),
+                                    Text(
+                                        'Pelunasan : ${formatCurrency.format(int.parse(snapshot.data![index].vendor.harga))}'),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Row(children: [
+                                      Text(
+                                        'Mulai:',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                       SizedBox(
-                                        height: 10,
+                                        width: 2,
                                       ),
                                       Text(
-                                          'DP : ${formatCurrency.format(int.parse(snapshot.data![index].vendor.nominal_dp))}'),
+                                          '${snapshot.data![index].start_booking}')
+                                    ]),
+                                    Row(children: [
+                                      Text(
+                                        'Berakhir:',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                       SizedBox(
-                                        height: 2,
+                                        width: 2,
                                       ),
                                       Text(
-                                          'Pelunasan : ${formatCurrency.format(int.parse(snapshot.data![index].vendor.harga))}'),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Row(children: [
-                                        Text(
-                                          'Mulai:',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          width: 2,
-                                        ),
-                                        Text(
-                                            '${snapshot.data![index].start_booking}')
-                                      ]),
-                                      Row(children: [
-                                        Text(
-                                          'Berakhir:',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          width: 2,
-                                        ),
-                                        Text(
-                                            '${snapshot.data![index].end_booking}')
-                                      ]),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text(
-                                          '${status_booking[snapshot.data![index].status]}',
-                                          style: TextStyle(
-                                              color: status_color[
-                                                  snapshot.data![index].status],
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.bold)),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
+                                          '${snapshot.data![index].end_booking}')
+                                    ]),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                        '${status_booking[snapshot.data![index].status]}',
+                                        style: TextStyle(
+                                            color: status_color[
+                                            snapshot.data![index].status],
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold)),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.end,
+                                        children: [
+                                          RaisedButton(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(10.0),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DetailBooking(
+                                                            idBooking:
+                                                            snapshot
+                                                                .data![
+                                                            index]
+                                                                .id)),
+                                              );
+                                            },
+                                            padding: EdgeInsets.all(5.0),
+                                            color: Colors.green,
+                                            textColor: Colors.white,
+                                            child: Text("Detail",
+                                                style:
+                                                TextStyle(fontSize: 15)),
+                                          ),
+                                          SizedBox(
+                                            width: 3,
+                                          ),
+                                          if (snapshot.data![index].status == 0)
                                             RaisedButton(
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(10.0),
+                                                BorderRadius.circular(
+                                                    10.0),
                                               ),
                                               onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          DetailBooking(
-                                                              idBooking:
-                                                                  snapshot
-                                                                      .data![
-                                                                          index]
-                                                                      .id)),
-                                                );
+                                                cancelBooking(
+                                                    snapshot.data![index].id);
                                               },
                                               padding: EdgeInsets.all(5.0),
-                                              color: Colors.green,
+                                              color: Colors.red,
                                               textColor: Colors.white,
-                                              child: Text("Detail",
-                                                  style:
-                                                      TextStyle(fontSize: 15)),
-                                            ),
-                                            SizedBox(
-                                              width: 3,
-                                            ),
-                                            if (snapshot.data![index].status == 0)
+                                              child: Text("Batal",
+                                                  style: TextStyle(
+                                                      fontSize: 15)),
+                                            )
+                                          else if (snapshot.data![index].status == 7)
+                                            RaisedButton(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    10.0),
+                                              ),
+                                              onPressed: () {
+                                                _showRatingDialog(
+                                                    snapshot.data![index]);
+                                              },
+                                              padding: EdgeInsets.all(5.0),
+                                              color: Colors.blue,
+                                              textColor: Colors.white,
+                                              child: Text("Rate",
+                                                  style: TextStyle(
+                                                      fontSize: 15)),
+                                            )
+                                          else if(snapshot.data![index].status == 8)
                                               RaisedButton(
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
+                                                  BorderRadius.circular(
+                                                      10.0),
                                                 ),
                                                 onPressed: () {
-                                                  cancelBooking(
-                                                      snapshot.data![index].id);
-                                                },
-                                                padding: EdgeInsets.all(5.0),
-                                                color: Colors.red,
-                                                textColor: Colors.white,
-                                                child: Text("Batal",
-                                                    style: TextStyle(
-                                                        fontSize: 15)),
-                                              )
-                                            else if (snapshot.data![index].status == 7)
-                                                RaisedButton(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                ),
-                                                onPressed: () {
-                                                  _showRatingDialog(
-                                                      snapshot.data![index]);
+                                                  _showDetailRating(snapshot.data![index].review);
                                                 },
                                                 padding: EdgeInsets.all(5.0),
                                                 color: Colors.blue,
                                                 textColor: Colors.white,
-                                                child: Text("Rate",
+                                                child: Text("Ulasan Saya",
                                                     style: TextStyle(
                                                         fontSize: 15)),
                                               )
-                                           else if(snapshot.data![index].status == 8)
-                                                RaisedButton(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        10.0),
-                                                  ),
-                                                  onPressed: () {
-                                                    _showDetailRating(snapshot.data![index].review);
-                                                  },
-                                                  padding: EdgeInsets.all(5.0),
-                                                  color: Colors.blue,
-                                                  textColor: Colors.white,
-                                                  child: Text("Ulasan Saya",
-                                                      style: TextStyle(
-                                                          fontSize: 15)),
-                                                )
-                                          ]),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                    ],
-                                  ),
-                                ))));
-                  });
-            } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            }
-            return Padding(
-                padding: EdgeInsets.fromLTRB(20, 40, 20, 40),
-                child: CircularProgressIndicator());
-          }),
+                                        ]),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                  ],
+                                ),
+                              ))));
+                });
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return Padding(
+              padding: EdgeInsets.fromLTRB(20, 40, 20, 40),
+              child: CircularProgressIndicator());
+        }),
+    )
     );
   }
 
-  void cancelBooking(id) async {
-    var res = await BookingNetwork().cancelBooking(id);
-    var body = json.decode(res.body);
-    if (body["success"] == true) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => super.widget));
-    } else {
-      print(body["message"]);
-    }
+  void cancelBooking(id) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Yakin ingin membatalkan order?",
+      desc: "Jika ingin order lagi harap hubungi admin.",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Batalkan Order",
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          ),
+          onPressed: () async {
+            var res = await BookingNetwork().cancelBooking(id);
+            var body = json.decode(res.body);
+            if (body["success"] == true) {
+            Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) => super.widget));
+            } else {
+              Alert(
+                context: context,
+                type: AlertType.error,
+                title: "Gagal Membatalkan order!",
+                desc: "Terdapat kesalahan.",
+                buttons: [
+                  DialogButton(
+                    child: Text(
+                      "OK",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    width: 120,
+                  )
+                ],
+              ).show();
+            }
+          },
+          color: Colors.red,
+        ),
+        DialogButton(
+          child: Text(
+            "Tidak jadi",
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.blue,
+        )
+      ],
+    ).show();
+
   }
 
   void addReview(booking, score, comment) async {
@@ -256,6 +306,7 @@ class _BookingListState extends State<BookingList> {
   void _showRatingDialog(booking) {
     final _dialog = RatingDialog(
       initialRating: 1.0,
+      starSize: 25,
       // your app's name?
       title: Text(
         'Beri Ulasan Anda',
@@ -306,7 +357,7 @@ class _BookingListState extends State<BookingList> {
               color: Colors.amber,
             ),
             itemCount: 5,
-            itemSize: 30.0,
+            itemSize: 20.0,
             direction: Axis.horizontal,
           ),
             SizedBox(

@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:dream_wedding_app/Screens/home_screen.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileUpdate extends StatefulWidget {
@@ -221,19 +222,13 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   void _updateProfil()
   async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var user_id = jsonDecode(localStorage.getString('user'))['id'];
-    var image_file = null;
     Map<String,String> data = {};
-
       data = {
         "nama_depan" : nama_depan,
         "nama_belakang" : nama_belakang,
         "alamat" : alamat,
-        "_method" : "PUT"
       };
-
-    var res = await AuthNetwork().updateProfile(uploadimage!.path, data, '/update/profile');
-    var body = jsonDecode(res);
+    var body = await AuthNetwork().updateProfile(uploadimage, data, '/update/profile');
     if(body["success"]==true){
       Navigator.push(
         context,
@@ -242,7 +237,22 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
         ),
       );
     } else {
-      print(body["message"]);
+      Alert(
+        context: context,
+        type: AlertType.error,
+        title: "Gagal Update!",
+        desc: "Pastikan data yang dimasukkan benar.",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () => Navigator.pop(context),
+            width: 120,
+          )
+        ],
+      ).show();
     }
   }
 }

@@ -15,6 +15,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rating_dialog/rating_dialog.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailBooking extends StatefulWidget {
@@ -44,6 +45,9 @@ class _DetailBookingState extends State<DetailBooking> {
       uploadimage = choosedimage;
     });
   }
+  Future<Booking> _refreshProducts(BuildContext context) async {
+    return BookingNetwork().getBookingDetail(widget.idBooking);
+  }
 
   final CarouselController _controller = CarouselController();
 
@@ -60,219 +64,92 @@ class _DetailBookingState extends State<DetailBooking> {
           ),
 
         ),
-        body: FutureBuilder<Booking>(
-          future: futureDetailBooking,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return SingleChildScrollView(
-                  padding: EdgeInsets.all(15),
-                  child: Column(children: [
-                    Card(
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            height: 150,
-                            child: Image.network(
-                                IMG_URL + snapshot.data!.vendor.cover,
-                                fit: BoxFit.cover),
-                          ),
-                          Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${snapshot.data!.vendor.nama}',
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 17),
-                                    ),
-                                    Text(
-                                      formatCurrency.format(int.parse(
-                                          snapshot.data!.vendor.harga)),
-                                      style: TextStyle(
-                                          color: Colors.green, fontSize: 15),
-                                    ),
-                                    if (snapshot.data!.status == 0)
-                                      RaisedButton(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(
-                                              10.0),
-                                        ),
-                                        onPressed: () {
-                                          // cancelBooking(
-                                          //     snapshot.data![index].id);
-                                        },
-                                        padding: EdgeInsets.all(5.0),
-                                        color: Colors.red,
-                                        textColor: Colors.white,
-                                        child: Text("Batalkan Pesanan",
-                                            style: TextStyle(
-                                                fontSize: 15)),
-                                      )
-                                  ])),
-                        ],
+        body:
+    RefreshIndicator(
+    onRefresh: () => _refreshProducts(context),
+    child:FutureBuilder<Booking>(
+      future: futureDetailBooking,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return SingleChildScrollView(
+              padding: EdgeInsets.all(15),
+              child: Column(children: [
+                Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 150,
+                        child: Image.network(
+                            IMG_URL + snapshot.data!.vendor.cover,
+                            fit: BoxFit.cover),
                       ),
-                    ),
-                    Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(15),
-                            child: Column(
+                      Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Detail Tagihan DP',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
-                                SizedBox(height: 10),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Nominal DP',
-                                                style: TextStyle(
-                                                    color: Colors.grey)),
-                                            SizedBox(height: 5),
-                                            Text(
-                                                formatCurrency.format(int.parse(
-                                                    snapshot.data!.payment![0]
-                                                        .nominal)),
-                                                style: TextStyle(
-                                                    color: Color(0xff80cbc4),
-                                                    fontSize: 17,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            Text('Kode Unik',
-                                                style: TextStyle(
-                                                    color: Colors.grey)),
-                                            SizedBox(height: 5),
-                                            Text(
-                                                '${snapshot.data!.payment![0].kode_unik}',
-                                                style: TextStyle(
-                                                    color: Color(0xff80cbc4),
-                                                    fontSize: 17,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ]),
-                                      Badge(
-                                        toAnimate: false,
-                                        shape: BadgeShape.square,
-                                        badgeColor: verification_color[snapshot
-                                            .data!
-                                            .payment![0]
-                                            .status_pembayaran],
-                                        borderRadius: BorderRadius.circular(8),
-                                        badgeContent: Text(
-                                            '${verifications[snapshot.data!.payment![0].status_pembayaran]}',
-                                            style:
-                                                TextStyle(color: Colors.black)),
-                                      ),
-                                    ]),
-                                SizedBox(height: 5),
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'Rekening Pembayaran\n',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                        color: Colors.grey),
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text:
-                                              '${snapshot.data!.payment![0].bankAccount.nomor_rekening} (${snapshot.data!.payment![0].bankAccount.nama_bank})',
-                                          style: TextStyle(
-                                              color: Color(0xff80cbc4),
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.bold)),
-                                    ],
-                                  ),
+                                Text(
+                                  '${snapshot.data!.vendor.nama}',
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 17),
                                 ),
-                                SizedBox(height: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Bukti Pembayaran',
+                                Text(
+                                  formatCurrency.format(int.parse(
+                                      snapshot.data!.vendor.harga)),
+                                  style: TextStyle(
+                                      color: Colors.green, fontSize: 15),
+                                ),
+                                if (snapshot.data!.status == 0)
+                                  RaisedButton(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(
+                                          10.0),
+                                    ),
+                                    onPressed: () {
+                                      // cancelBooking(
+                                      //     snapshot.data![index].id);
+                                    },
+                                    padding: EdgeInsets.all(5.0),
+                                    color: Colors.red,
+                                    textColor: Colors.white,
+                                    child: Text("Batalkan Pesanan",
                                         style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold)),
-                                    if (snapshot.data!.payment![0].bukti_pembayaran == null)
-                                      Row(children: [
-                                        RaisedButton(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                          onPressed: () {
-                                            chooseImage();
-                                          },
-                                          padding: EdgeInsets.all(5.0),
-                                          color: Color(0xff80cbc4),
-                                          textColor: Colors.white,
-                                          child: Text("Pilih file",
-                                              style: TextStyle(fontSize: 15)),
-                                        ),
-                                        SizedBox(width: 5),
-                                        if (uploadimage != null)
-                                          RaisedButton(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                            ),
-                                            onPressed: () {
-                                              uploadBuktiPembayaran(snapshot
-                                                  .data!.payment![0].id);
-                                            },
-                                            padding: EdgeInsets.all(5.0),
-                                            color: Color(0xff80cbc4),
-                                            textColor: Colors.white,
-                                            child: Text("Upload",
-                                                style: TextStyle(fontSize: 15)),
-                                          ),
-                                      ])
-                                    else
-                                      Column(children: [
-                                        Image.network(IMG_URL_BUKTI +
-                                            snapshot.data!.payment![0]
-                                                .bukti_pembayaran)
-                                      ])
-                                  ],
-                                )
-                              ],
-                            ))),
-                    SizedBox(height: 10),
-                    Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(15),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Detail Tagihan Pelunasan',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
-                                if (snapshot.data!.payment!.length > 1)
+                                            fontSize: 15)),
+                                  )
+                              ])),
+                    ],
+                  ),
+                ),
+                Card(
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Detail Tagihan DP',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold)),
+                            SizedBox(height: 10),
+                            Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.center,
+                                children: [
                                   Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
-                                        Text('Nominal Pelunasan',
-                                            style:
-                                                TextStyle(color: Colors.grey)),
+                                        Text('Nominal DP',
+                                            style: TextStyle(
+                                                color: Colors.grey)),
                                         SizedBox(height: 5),
                                         Text(
                                             formatCurrency.format(int.parse(
@@ -281,172 +158,303 @@ class _DetailBookingState extends State<DetailBooking> {
                                             style: TextStyle(
                                                 color: Color(0xff80cbc4),
                                                 fontSize: 17,
-                                                fontWeight: FontWeight.bold)),
+                                                fontWeight:
+                                                FontWeight.bold)),
                                         Text('Kode Unik',
-                                            style:
-                                                TextStyle(color: Colors.grey)),
+                                            style: TextStyle(
+                                                color: Colors.grey)),
                                         SizedBox(height: 5),
                                         Text(
-                                            '${snapshot.data!.payment![1].kode_unik}',
+                                            '${snapshot.data!.payment![0].kode_unik}',
                                             style: TextStyle(
                                                 color: Color(0xff80cbc4),
                                                 fontSize: 17,
-                                                fontWeight: FontWeight.bold)),
-                                        Text('Rekening Pembayaran',
-                                            style:
-                                                TextStyle(color: Colors.grey)),
-                                        SizedBox(height: 5),
-                                        Text(
-                                            '${snapshot.data!.payment![1].bankAccount.nomor_rekening} (${snapshot.data!.payment![1].bankAccount.nama_bank})',
-                                            style: TextStyle(
-                                                color: Color(0xff80cbc4),
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.bold)),
-                                        SizedBox(height: 5),
-                                        Badge(
-                                          toAnimate: false,
-                                          shape: BadgeShape.square,
-                                          badgeColor: verification_color[
-                                              snapshot.data!.payment![1]
-                                                  .status_pembayaran],
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          badgeContent: Text(
-                                              '${verifications[snapshot.data!.payment![1].status_pembayaran]}',
-                                              style: TextStyle(
-                                                  color: Colors.black)),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Text('Bukti Pembayaran',
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold)),
-                                        if (snapshot.data!.payment![1].bukti_pembayaran == null)
-                                          Row(children: [
-                                            RaisedButton(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                              ),
-                                              onPressed: () {
-                                                chooseImage();
-                                              },
-                                              padding: EdgeInsets.all(5.0),
-                                              color: Color(0xff80cbc4),
-                                              textColor: Colors.white,
-                                              child: Text("Pilih file",
-                                                  style:
-                                                      TextStyle(fontSize: 15)),
-                                            ),
-                                            SizedBox(width: 5),
-                                            if (uploadimage != null)
-                                              RaisedButton(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                ),
-                                                onPressed: () {
-                                                  uploadBuktiPembayaran(snapshot.data!.payment![1].id);
-                                                },
-                                                padding: EdgeInsets.all(5.0),
-                                                color: Color(0xff80cbc4),
-                                                textColor: Colors.white,
-                                                child: Text("Upload",
-                                                    style: TextStyle(
-                                                        fontSize: 15)),
-                                              ),
-                                          ])
-                                        else
-                                          Column(children: [
-                                            Image.network(IMG_URL_BUKTI +
-                                                snapshot.data!.payment![1]
-                                                    .bukti_pembayaran)
-                                          ])
-                                      ])
-                                else
-                                  Text(
-                                      '\nMohon lunasi pembayaran DP terlebih dahulu',
+                                                fontWeight:
+                                                FontWeight.bold)),
+                                      ]),
+                                  Badge(
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: verification_color[snapshot
+                                        .data!
+                                        .payment![0]
+                                        .status_pembayaran],
+                                    borderRadius: BorderRadius.circular(8),
+                                    badgeContent: Text(
+                                        '${verifications[snapshot.data!.payment![0].status_pembayaran]}',
+                                        style:
+                                        TextStyle(color: Colors.black)),
+                                  ),
+                                ]),
+                            SizedBox(height: 5),
+                            RichText(
+                              text: TextSpan(
+                                text: 'Rekening Pembayaran\n',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    color: Colors.grey),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text:
+                                      '${snapshot.data!.payment![0].bankAccount.nomor_rekening} (${snapshot.data!.payment![0].bankAccount.nama_bank})',
                                       style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.grey,
+                                          color: Color(0xff80cbc4),
+                                          fontSize: 17,
                                           fontWeight: FontWeight.bold)),
-                              ],
-                            ))),
-                    SizedBox(height: 10),
-                    Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(15),
-                            child: Column(
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Ulasan saya',
+                                Text('Bukti Pembayaran',
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold)),
-                                if(snapshot.data!.review==null&&snapshot.data!.status==7)
-                                  RaisedButton(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          10.0),
+                                if (snapshot.data!.payment![0].bukti_pembayaran == null)
+                                  Row(children: [
+                                    RaisedButton(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(10.0),
+                                      ),
+                                      onPressed: () {
+                                        chooseImage();
+                                      },
+                                      padding: EdgeInsets.all(5.0),
+                                      color: Color(0xff80cbc4),
+                                      textColor: Colors.white,
+                                      child: Text("Pilih file",
+                                          style: TextStyle(fontSize: 15)),
                                     ),
-                                    onPressed: () {
-                                      _showRatingDialog(
-                                          snapshot.data);
-                                    },
-                                    padding: EdgeInsets.all(5.0),
-                                    color: Colors.blue,
-                                    textColor: Colors.white,
-                                    child: Text("Beri Ulasan",
-                                        style: TextStyle(
-                                            fontSize: 15)),
-                                  )
-                                else if(snapshot.data!.review!=null&&snapshot.data!.status==8)
-                                   Column(children: [
-                                     SizedBox(height: 10),
-                                      RatingBarIndicator(
-                                        rating: double.parse(snapshot.data!.review!.score),
-                                        itemBuilder: (context, index) => Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
+                                    SizedBox(width: 5),
+                                    if (uploadimage != null)
+                                      RaisedButton(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(10.0),
                                         ),
-                                        itemCount: 5,
-                                        itemSize: 30.0,
-                                        direction: Axis.horizontal,
+                                        onPressed: () {
+                                          uploadBuktiPembayaran(snapshot
+                                              .data!.payment![0].id);
+                                        },
+                                        padding: EdgeInsets.all(5.0),
+                                        color: Color(0xff80cbc4),
+                                        textColor: Colors.white,
+                                        child: Text("Upload",
+                                            style: TextStyle(fontSize: 15)),
                                       ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text(
-                                          '${snapshot.data!.review!.comment}',
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(fontSize: 15)),
-                                    ])
+                                  ])
                                 else
-                                  Text('\nBelum ada ulasan',
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold))
+                                  Column(children: [
+                                    Image.network(IMG_URL_BUKTI +
+                                        snapshot.data!.payment![0]
+                                            .bukti_pembayaran)
+                                  ])
                               ],
-                            ))),
-                    SizedBox(height: 15),
-                  ]));
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-            // By default, show a loading spinner.
-            return const CircularProgressIndicator();
-          },
-        ));
+                            )
+                          ],
+                        ))),
+                SizedBox(height: 10),
+                Card(
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Detail Tagihan Pelunasan',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold)),
+                            if (snapshot.data!.payment!.length > 1)
+                              Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.start,
+                                  children: [
+                                    Text('Nominal Pelunasan',
+                                        style:
+                                        TextStyle(color: Colors.grey)),
+                                    SizedBox(height: 5),
+                                    Text(
+                                        formatCurrency.format(int.parse(
+                                            snapshot.data!.payment![0]
+                                                .nominal)),
+                                        style: TextStyle(
+                                            color: Color(0xff80cbc4),
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold)),
+                                    Text('Kode Unik',
+                                        style:
+                                        TextStyle(color: Colors.grey)),
+                                    SizedBox(height: 5),
+                                    Text(
+                                        '${snapshot.data!.payment![1].kode_unik}',
+                                        style: TextStyle(
+                                            color: Color(0xff80cbc4),
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold)),
+                                    Text('Rekening Pembayaran',
+                                        style:
+                                        TextStyle(color: Colors.grey)),
+                                    SizedBox(height: 5),
+                                    Text(
+                                        '${snapshot.data!.payment![1].bankAccount.nomor_rekening} (${snapshot.data!.payment![1].bankAccount.nama_bank})',
+                                        style: TextStyle(
+                                            color: Color(0xff80cbc4),
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold)),
+                                    SizedBox(height: 5),
+                                    Badge(
+                                      toAnimate: false,
+                                      shape: BadgeShape.square,
+                                      badgeColor: verification_color[
+                                      snapshot.data!.payment![1]
+                                          .status_pembayaran],
+                                      borderRadius:
+                                      BorderRadius.circular(8),
+                                      badgeContent: Text(
+                                          '${verifications[snapshot.data!.payment![1].status_pembayaran]}',
+                                          style: TextStyle(
+                                              color: Colors.black)),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text('Bukti Pembayaran',
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold)),
+                                    if (snapshot.data!.payment![1].bukti_pembayaran == null)
+                                      Row(children: [
+                                        RaisedButton(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(10.0),
+                                          ),
+                                          onPressed: () {
+                                            chooseImage();
+                                          },
+                                          padding: EdgeInsets.all(5.0),
+                                          color: Color(0xff80cbc4),
+                                          textColor: Colors.white,
+                                          child: Text("Pilih file",
+                                              style:
+                                              TextStyle(fontSize: 15)),
+                                        ),
+                                        SizedBox(width: 5),
+                                        if (uploadimage != null)
+                                          RaisedButton(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  10.0),
+                                            ),
+                                            onPressed: () {
+                                              uploadBuktiPembayaran(snapshot.data!.payment![1].id);
+                                            },
+                                            padding: EdgeInsets.all(5.0),
+                                            color: Color(0xff80cbc4),
+                                            textColor: Colors.white,
+                                            child: Text("Upload",
+                                                style: TextStyle(
+                                                    fontSize: 15)),
+                                          ),
+                                      ])
+                                    else
+                                      Column(children: [
+                                        Image.network(IMG_URL_BUKTI +
+                                            snapshot.data!.payment![1]
+                                                .bukti_pembayaran)
+                                      ])
+                                  ])
+                            else
+                              Text(
+                                  '\nMohon lunasi pembayaran DP terlebih dahulu',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold)),
+                          ],
+                        ))),
+                SizedBox(height: 10),
+                Card(
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Ulasan saya',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold)),
+                            if(snapshot.data!.review==null&&snapshot.data!.status==7)
+                              RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(
+                                      10.0),
+                                ),
+                                onPressed: () {
+                                  _showRatingDialog(
+                                      snapshot.data);
+                                },
+                                padding: EdgeInsets.all(5.0),
+                                color: Colors.blue,
+                                textColor: Colors.white,
+                                child: Text("Beri Ulasan",
+                                    style: TextStyle(
+                                        fontSize: 15)),
+                              )
+                            else if(snapshot.data!.review!=null&&snapshot.data!.status==8)
+                              Column(children: [
+                                SizedBox(height: 10),
+                                RatingBarIndicator(
+                                  rating: double.parse(snapshot.data!.review!.score),
+                                  itemBuilder: (context, index) => Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                  ),
+                                  itemCount: 5,
+                                  itemSize: 30.0,
+                                  direction: Axis.horizontal,
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                    '${snapshot.data!.review!.comment}',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 15)),
+                              ])
+                            else
+                              Text('\nBelum ada ulasan',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold))
+                          ],
+                        ))),
+                SizedBox(height: 15),
+              ]));
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        // By default, show a loading spinner.
+        return const CircularProgressIndicator();
+      },
+    )
+    )
+        );
   }
 
   void uploadBuktiPembayaran(id) async {
-    var res = await BookingNetwork()
-        .uploadBuktiPembayaran(uploadimage!, '/booking/upload-bukti/${id}');
+    var res = await BookingNetwork().uploadBuktiPembayaran(uploadimage!, '/booking/upload-bukti/$id');
     if (res["success"] == true) {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (BuildContext context) => super.widget));
@@ -470,7 +478,22 @@ class _DetailBookingState extends State<DetailBooking> {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (BuildContext context) => super.widget));
     } else {
-      print(body["message"]);
+      Alert(
+        context: context,
+        type: AlertType.error,
+        title: "Gagal Upload!",
+        desc: "Pastikan data yang dimasukkan benar.",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () => Navigator.pop(context),
+            width: 120,
+          )
+        ],
+      ).show();
     }
   }
 

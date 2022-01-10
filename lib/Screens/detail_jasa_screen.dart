@@ -6,6 +6,7 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dream_wedding_app/Controllers/vendor.dart';
 import 'package:dream_wedding_app/Models/vendor.dart';
+import 'package:dream_wedding_app/Screens/booking_form_screen.dart';
 import 'package:dream_wedding_app/Utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -161,14 +162,14 @@ class _DetailJasaState extends State<DetailJasa> {
                                     padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
                                     child: GestureDetector(
                                         onTap: () {
-                                          // Route route = MaterialPageRoute(
-                                          //     builder: (context) => BottomNavigation());
-                                          // Navigator.push(context, route);
+                                          snapshot.data!.is_ordered == 0 ? Navigator.push(context, MaterialPageRoute(
+                                              builder: (context) =>
+                                                  BookingForm(vendor: snapshot.data!))) : null;
                                         },
                                         child: Container(
                                           height: 50,
                                           decoration: BoxDecoration(
-                                            color: Color(0xff80cbc4),
+                                            color: snapshot.data!.is_ordered == 0 ? Color(0xff80cbc4) : Colors.grey,
                                             borderRadius: BorderRadius.only(
                                                 topLeft: Radius.circular(10),
                                                 topRight: Radius.circular(10),
@@ -183,17 +184,19 @@ class _DetailJasaState extends State<DetailJasa> {
                                               ),
                                             ],
                                           ),
-                                          child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  "Pesan Sekarang",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 18,
-                                                      fontWeight: FontWeight.bold),
-                                                ),
-                                              ]),
+                                          child:
+                                          Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "Pesan Sekarang",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18,
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                ]),
+
                                         )),
                                   ),
                                   Padding(

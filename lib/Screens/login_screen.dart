@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:dream_wedding_app/Widgets/bottom_navigation.dart';
 import 'package:dream_wedding_app/Screens/home_screen.dart';
 import 'package:dream_wedding_app/Screens/register_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Controllers/auth.dart';
@@ -21,8 +23,19 @@ class LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   var email;
   var password;
+  var fcm_token;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  late FirebaseMessaging messaging;
 
+  @override
+  void initState() {
+    messaging = FirebaseMessaging.instance;
+    messaging.getToken().then((value) {
+      setState(() {
+        fcm_token = value;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,17 +205,18 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
   void _login() async{
+    print(fcm_token);
     setState(() {
       _isLoading = true;
     });
     var data = {
       'email' : email,
-      'password' : password
+      'password' : password,
+      'fcm_token' : fcm_token
     };
 
     var res = await AuthNetwork().authData(data, '/login');
     var body = json.decode(res.body);
-    print(data);
     if(body['success']){
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.setString('token', json.encode(body['access_token'])); //Simpan token di local storage
@@ -214,7 +228,22 @@ class LoginScreenState extends State<LoginScreen> {
         ),
       );
     }else{
-      print(body['message']);
+      Alert(
+        context: context,
+        type: AlertType.error,
+        title: "Gagal Login!",
+        desc: "Pastikan E-Mail dan password benar.",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () => Navigator.pop(context),
+            width: 120,
+          )
+        ],
+      ).show();
     }
     setState(() {
       _isLoading = false;

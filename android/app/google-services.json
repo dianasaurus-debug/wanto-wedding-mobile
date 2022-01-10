@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "961636144894",
+    "project_id": "wanto-wedding",
+    "storage_bucket": "wanto-wedding.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961636144894:android:dc08086dc5d0fa43e677af",
+        "android_client_info": {
+          "package_name": "com.example.dream_wedding_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "961636144894-59kcgihv31jafas3tg8ffs85k689usb5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2QdPSUVHu_UIRrO0hrYzV_l4L6kN5B10"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "961636144894-59kcgihv31jafas3tg8ffs85k689usb5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:dream_wedding_app/Controllers/auth.dart';
 import 'package:dream_wedding_app/Screens/login_screen.dart';
 import 'package:dream_wedding_app/Widgets/bottom_navigation.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -23,6 +25,18 @@ class RegisterScreenState extends State<RegisterScreen> {
   var nama_depan;
   var nama_belakang;
   var alamat;
+  var fcm_token;
+  late FirebaseMessaging messaging;
+
+  @override
+  void initState() {
+    messaging = FirebaseMessaging.instance;
+    messaging.getToken().then((value) {
+      setState(() {
+        fcm_token = value;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -261,7 +275,8 @@ class RegisterScreenState extends State<RegisterScreen> {
       'password': password,
       'nama_depan': nama_depan,
       'nama_belakang': nama_belakang,
-      'alamat' : alamat
+      'alamat' : alamat,
+      'fcm_token' : fcm_token
     };
 
     var res = await AuthNetwork().authData(data, '/register');
@@ -276,6 +291,23 @@ class RegisterScreenState extends State<RegisterScreen> {
             builder: (context) => BottomNavigation()
         ),
       );
+    } else {
+      Alert(
+        context: context,
+        type: AlertType.error,
+        title: "Gagal Daftar!",
+        desc: "Pastikan data yang dimasukkan benar.",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () => Navigator.pop(context),
+            width: 120,
+          )
+        ],
+      ).show();
     }
 
     setState(() {

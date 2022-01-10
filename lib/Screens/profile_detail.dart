@@ -56,28 +56,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
                             clipBehavior: Clip.none,
                             children: [
                               CircleAvatar(
-                                backgroundImage: NetworkImage(IMG_URL+snapshot.data!.profile_photo_path),
+                                backgroundImage: snapshot.data!.profile_photo_path!=null ? NetworkImage(IMG_URL+snapshot.data!.profile_photo_path) : NetworkImage(IMG_URL+'user.png'),
                               ),
-                              // Positioned(
-                              //   right: -16,
-                              //   bottom: 0,
-                              //   child: SizedBox(
-                              //     height: 46,
-                              //     width: 46,
-                              //     child: TextButton(
-                              //       style: TextButton.styleFrom(
-                              //         shape: RoundedRectangleBorder(
-                              //           borderRadius: BorderRadius.circular(50),
-                              //           side: BorderSide(color: Colors.white),
-                              //         ),
-                              //         primary: Colors.white,
-                              //         backgroundColor: Color(0xFFF5F6F9),
-                              //       ),
-                              //       onPressed: () {},
-                              //       child: Icon(Icons.camera_alt, color: Colors.grey),
-                              //     ),
-                              //   ),
-                              // )
                             ],
                           ),
                         ),

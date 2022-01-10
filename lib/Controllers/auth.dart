@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dream_wedding_app/utils/constants.dart';
@@ -32,27 +33,42 @@ class AuthNetwork{
     );
   }
 
-  updateProfile(String file, data, apiUrl) async {
+  updateProfile(File? image, data, apiUrl) async {
     var fullUrl = API_URL + apiUrl;
     await _getToken();
-    Map<String,String> headers={
-      "Authorization":"Bearer $token",
-      "Content-type": "multipart/form-data",
-      "Accept" : "application/json",
-    };
-    var request = http.MultipartRequest(
-      'POST', Uri.parse(fullUrl),
 
-    );
-    request.files.add(
-        await http.MultipartFile.fromPath('photo', file)
-    );
-    request.headers.addAll(headers);
-    request.fields.addAll(data);
-    var res = await request.send();
-    var responseString = await res.stream.bytesToString();
-    print(responseString);
-    return responseString;
+
+    FormData formData;
+    if(image!=null){
+      print('gak null');
+      String fileName = image.path.split('/').last;
+      formData = FormData.fromMap({
+        "photo": await MultipartFile.fromFile(image.path, filename:fileName),
+        "nama_depan" : data["nama_depan"],
+        "nama_belakang" : data["nama_belakang"],
+        "alamat" : data["alamat"],
+        "_method" : "PUT"
+      }
+      );
+    } else {
+      print('null');
+      formData = FormData.fromMap({
+        "nama_depan" : data["nama_depan"],
+        "nama_belakang" : data["nama_belakang"],
+        "alamat" : data["alamat"],
+        "_method" : "PUT"
+      }
+      );
+    }
+    Dio dio = new Dio();
+    var headers = {
+      'accept': 'application/json',
+      'authorization': 'Bearer $token',
+      'Content-Type': 'multipart/form-data'
+    };
+    var response = await dio.post(fullUrl, data: formData, options: Options(method: "POST", headers: headers));
+    print(response.data);
+    return response.data;
   }
 
 

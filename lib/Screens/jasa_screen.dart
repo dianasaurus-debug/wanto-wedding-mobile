@@ -152,7 +152,8 @@ class _JasaScreenState extends State<JasaScreen> {
                         ],
                       );
                     } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
+                      print(snapshot);
+                      return Text("${snapshot}");
                     }
                     return Padding(
                       padding: EdgeInsets.fromLTRB(20, 40, 20, 40),
@@ -174,106 +175,115 @@ class _JasaScreenState extends State<JasaScreen> {
                   future: futureVendorMakeUp,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              width: double.infinity,
-                              height: 300,
-                              child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (BuildContext context, index) {
-                                    return Container(
-                                        width: MediaQuery.of(context).size.width * 0.8,
-                                        margin: EdgeInsets.only(right: 5),
-                                        child: ListView(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () => {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) => DetailJasa(idVendor : snapshot.data![index].id)),
-                                                  )
-                                                },
-                                                child: Card(
-                                                  clipBehavior: Clip.antiAlias,
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                    children: [
-                                                      Container(
-                                                        width: double.infinity,
-                                                        height: 150,
-                                                        child: Image.network(IMG_URL+snapshot.data![index].cover,
-                                                            fit: BoxFit.cover),
-                                                      ),
-                                                      Padding(
-                                                          padding: const EdgeInsets.all(16.0),
-                                                          child: Column(
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment.start,
-                                                              children: [
-                                                                Text(
-                                                                  '${snapshot.data![index].nama}',
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      Colors.black,
-                                                                      fontWeight: FontWeight.bold,
-                                                                      fontSize: 17),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                Text(
-                                                                  formatCurrency.format(int.parse(snapshot.data![index].harga)),
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      Colors.green,
-                                                                      fontSize: 15),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                Align(
-                                                                  alignment:
-                                                                  Alignment.centerRight,
-                                                                  child: RaisedButton(
-                                                                    shape:
-                                                                    RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(10.0),
-                                                                    ),
-                                                                    onPressed: () {
-                                                                      Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) => BookingForm(vendor : snapshot.data![index]),
-                                                                      ));
-                                                                    },
-                                                                    padding:
-                                                                    EdgeInsets.all(5.0),
-                                                                    color: Color(0xff80cbc4),
-                                                                    textColor: Colors.white,
-                                                                    child: Text("Pesan",
-                                                                        style: TextStyle(
-                                                                            fontSize: 15)),
+                      if(snapshot.data!.length>0){
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                width: double.infinity,
+                                height: 300,
+                                child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: snapshot.data!.length,
+                                    itemBuilder: (BuildContext context, index) {
+                                      return Container(
+                                          width: MediaQuery.of(context).size.width * 0.8,
+                                          margin: EdgeInsets.only(right: 5),
+                                          child: ListView(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () => {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) => DetailJasa(idVendor : snapshot.data![index].id)),
+                                                    )
+                                                  },
+                                                  child: Card(
+                                                    clipBehavior: Clip.antiAlias,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                      children: [
+                                                        Container(
+                                                          width: double.infinity,
+                                                          height: 150,
+                                                          child: Image.network(IMG_URL+snapshot.data![index].cover,
+                                                              fit: BoxFit.cover),
+                                                        ),
+                                                        Padding(
+                                                            padding: const EdgeInsets.all(16.0),
+                                                            child: Column(
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Text(
+                                                                    '${snapshot.data![index].nama}',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                        Colors.black,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 17),
                                                                   ),
-                                                                )
-                                                              ])),
-                                                    ],
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Text(
+                                                                    formatCurrency.format(int.parse(snapshot.data![index].harga)),
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                        Colors.green,
+                                                                        fontSize: 15),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Align(
+                                                                    alignment:
+                                                                    Alignment
+                                                                        .centerRight,
+                                                                    child: RaisedButton(
+                                                                      shape:
+                                                                      RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                            10.0),
+                                                                      ),
+                                                                      onPressed: () {
+                                                                        snapshot.data![index].is_ordered == 0 ?
+                                                                        Navigator.push(context, MaterialPageRoute(
+                                                                            builder: (context) =>
+                                                                                BookingForm(vendor: snapshot.data![index])),) : null;
+                                                                      },
+                                                                      padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                          5.0),
+                                                                      color: snapshot.data![index].is_ordered == 0 ? Color(0xff80cbc4) : Colors.grey,
+                                                                      textColor: Colors
+                                                                          .white,
+                                                                      child: Text(
+                                                                          "Pesan",
+                                                                          style: TextStyle(
+                                                                              fontSize: 15)),
+                                                                    ),
+                                                                  )
+                                                                ])),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              )
-                                            ])
-                                    );
-                                  })
-                          ),
-                        ],
-                      );
+                                                )
+                                              ])
+                                      );
+                                    })
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Text("Belum ada data");
+                      }
                     } else if (snapshot.hasError) {
                       return Text("${snapshot.error}");
                     }
@@ -297,106 +307,110 @@ class _JasaScreenState extends State<JasaScreen> {
               future: futureVendorBusana,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          width: double.infinity,
-                          height: 300,
-                          child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (BuildContext context, index) {
-                                return Container(
-                                    width: MediaQuery.of(context).size.width * 0.8,
-                                    margin: EdgeInsets.only(right: 5),
-                                    child: ListView(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () => {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => DetailJasa(idVendor : snapshot.data![index].id)),
-                                              )
-                                            },
-                                            child: Card(
-                                              clipBehavior: Clip.antiAlias,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    width: double.infinity,
-                                                    height: 150,
-                                                    child: Image.network(IMG_URL+snapshot.data![index].cover,
-                                                        fit: BoxFit.cover),
-                                                  ),
-                                                  Padding(
-                                                      padding: const EdgeInsets.all(16.0),
-                                                      child: Column(
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Text(
-                                                              '${snapshot.data![index].nama}',
-                                                              style: TextStyle(
-                                                                  color:
-                                                                  Colors.black,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  fontSize: 17),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Text(
-                                                              formatCurrency.format(int.parse(snapshot.data![index].harga)),
-                                                              style: TextStyle(
-                                                                  color:
-                                                                  Colors.green,
-                                                                  fontSize: 15),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Align(
-                                                              alignment:
-                                                              Alignment.centerRight,
-                                                              child: RaisedButton(
-                                                                shape:
-                                                                RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(10.0),
-                                                                ),
-                                                                onPressed: () {
-                                                                  Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => BookingForm(vendor : snapshot.data![index])
-                                                                  ));
-                                                                },
-                                                                padding:
-                                                                EdgeInsets.all(5.0),
-                                                                color: Color(0xff80cbc4),
-                                                                textColor: Colors.white,
-                                                                child: Text("Pesan",
-                                                                    style: TextStyle(
-                                                                        fontSize: 15)),
+                  if(snapshot.data!.length>0){
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            width: double.infinity,
+                            height: 300,
+                            child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: snapshot.data!.length,
+                                itemBuilder: (BuildContext context, index) {
+                                  return Container(
+                                      width: MediaQuery.of(context).size.width * 0.8,
+                                      margin: EdgeInsets.only(right: 5),
+                                      child: ListView(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () => {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => DetailJasa(idVendor : snapshot.data![index].id)),
+                                                )
+                                              },
+                                              child: Card(
+                                                clipBehavior: Clip.antiAlias,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      width: double.infinity,
+                                                      height: 150,
+                                                      child: Image.network(IMG_URL+snapshot.data![index].cover,
+                                                          fit: BoxFit.cover),
+                                                    ),
+                                                    Padding(
+                                                        padding: const EdgeInsets.all(16.0),
+                                                        child: Column(
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(
+                                                                '${snapshot.data![index].nama}',
+                                                                style: TextStyle(
+                                                                    color:
+                                                                    Colors.black,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 17),
                                                               ),
-                                                            )
-                                                          ])),
-                                                ],
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Text(
+                                                                formatCurrency.format(int.parse(snapshot.data![index].harga)),
+                                                                style: TextStyle(
+                                                                    color:
+                                                                    Colors.green,
+                                                                    fontSize: 15),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Align(
+                                                                alignment:
+                                                                Alignment.centerRight,
+                                                                child: RaisedButton(
+                                                                  shape:
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(10.0),
+                                                                  ),
+                                                                  onPressed: () {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => BookingForm(vendor : snapshot.data![index])
+                                                                        ));
+                                                                  },
+                                                                  padding:
+                                                                  EdgeInsets.all(5.0),
+                                                                  color: Color(0xff80cbc4),
+                                                                  textColor: Colors.white,
+                                                                  child: Text("Pesan",
+                                                                      style: TextStyle(
+                                                                          fontSize: 15)),
+                                                                ),
+                                                              )
+                                                            ])),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          )
-                                        ])
-                                );
-                              })
-                      ),
-                    ],
-                  );
+                                            )
+                                          ])
+                                  );
+                                })
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Text("Belum ada data");
+                  }
                 } else if (snapshot.hasError) {
                   return Text("${snapshot.error}");
                 }
@@ -420,106 +434,110 @@ class _JasaScreenState extends State<JasaScreen> {
                   future: futureVendorCatering,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              width: double.infinity,
-                              height: 300,
-                              child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (BuildContext context, index) {
-                                    return Container(
-                                        width: MediaQuery.of(context).size.width * 0.8,
-                                        margin: EdgeInsets.only(right: 5),
-                                        child: ListView(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () => {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) => DetailJasa(idVendor : snapshot.data![index].id)),
-                                                  )
-                                                },
-                                                child: Card(
-                                                  clipBehavior: Clip.antiAlias,
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                    children: [
-                                                      Container(
-                                                        width: double.infinity,
-                                                        height: 150,
-                                                        child: Image.network(IMG_URL+snapshot.data![index].cover,
-                                                            fit: BoxFit.cover),
-                                                      ),
-                                                      Padding(
-                                                          padding: const EdgeInsets.all(16.0),
-                                                          child: Column(
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment.start,
-                                                              children: [
-                                                                Text(
-                                                                  '${snapshot.data![index].nama}',
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      Colors.black,
-                                                                      fontWeight: FontWeight.bold,
-                                                                      fontSize: 17),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                Text(
-                                                                  formatCurrency.format(int.parse(snapshot.data![index].harga)),
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      Colors.green,
-                                                                      fontSize: 15),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                Align(
-                                                                  alignment:
-                                                                  Alignment.centerRight,
-                                                                  child: RaisedButton(
-                                                                    shape:
-                                                                    RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(10.0),
-                                                                    ),
-                                                                    onPressed: () {
-                                                                      Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) => BookingForm(vendor : snapshot.data![index]),
-                                                                      ));
-                                                                    },
-                                                                    padding:
-                                                                    EdgeInsets.all(5.0),
-                                                                    color: Color(0xff80cbc4),
-                                                                    textColor: Colors.white,
-                                                                    child: Text("Pesan",
-                                                                        style: TextStyle(
-                                                                            fontSize: 15)),
+                      if(snapshot.data!.length>0){
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                width: double.infinity,
+                                height: 300,
+                                child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: snapshot.data!.length,
+                                    itemBuilder: (BuildContext context, index) {
+                                      return Container(
+                                          width: MediaQuery.of(context).size.width * 0.8,
+                                          margin: EdgeInsets.only(right: 5),
+                                          child: ListView(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () => {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) => DetailJasa(idVendor : snapshot.data![index].id)),
+                                                    )
+                                                  },
+                                                  child: Card(
+                                                    clipBehavior: Clip.antiAlias,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                      children: [
+                                                        Container(
+                                                          width: double.infinity,
+                                                          height: 150,
+                                                          child: Image.network(IMG_URL+snapshot.data![index].cover,
+                                                              fit: BoxFit.cover),
+                                                        ),
+                                                        Padding(
+                                                            padding: const EdgeInsets.all(16.0),
+                                                            child: Column(
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Text(
+                                                                    '${snapshot.data![index].nama}',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                        Colors.black,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 17),
                                                                   ),
-                                                                )
-                                                              ])),
-                                                    ],
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Text(
+                                                                    formatCurrency.format(int.parse(snapshot.data![index].harga)),
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                        Colors.green,
+                                                                        fontSize: 15),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Align(
+                                                                    alignment:
+                                                                    Alignment.centerRight,
+                                                                    child: RaisedButton(
+                                                                      shape:
+                                                                      RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(10.0),
+                                                                      ),
+                                                                      onPressed: () {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder: (context) => BookingForm(vendor : snapshot.data![index]),
+                                                                            ));
+                                                                      },
+                                                                      padding:
+                                                                      EdgeInsets.all(5.0),
+                                                                      color: Color(0xff80cbc4),
+                                                                      textColor: Colors.white,
+                                                                      child: Text("Pesan",
+                                                                          style: TextStyle(
+                                                                              fontSize: 15)),
+                                                                    ),
+                                                                  )
+                                                                ])),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              )
-                                            ])
-                                    );
-                                  })
-                          ),
-                        ],
-                      );
+                                                )
+                                              ])
+                                      );
+                                    })
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Text("Belum ada data");
+                      }
                     } else if (snapshot.hasError) {
                       return Text("${snapshot.error}");
                     }

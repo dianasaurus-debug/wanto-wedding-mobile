@@ -14,12 +14,14 @@ import 'package:dream_wedding_app/Screens/daftar_paket_lengkap.dart';
 import 'package:dream_wedding_app/Screens/detail_jasa_screen.dart';
 import 'package:dream_wedding_app/Utils/constants.dart';
 import 'package:dream_wedding_app/Widgets/app_bar.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,12 +33,31 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Vendor>> futureTopThumbnails, futurePaketLengkap;
   final formatCurrency = new NumberFormat.simpleCurrency(locale: 'id_ID');
 
+  late FirebaseMessaging messaging;
+
   @override
   void initState() {
+    messaging = FirebaseMessaging.instance;
+    messaging.getToken().then((value){
+      print(value);
+    });
     // TODO: implement initState
     super.initState();
     futureTopThumbnails = VendorNetwork().getThumbnails();
     futurePaketLengkap = VendorNetwork().getAllPaketLengkap();
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      showSimpleNotification(
+        Text(event.notification!.title!),
+        leading: Icon(Icons.warning_rounded, color : Colors.red),
+        subtitle: Text(event.notification!.body!),
+        background: Colors.cyan.shade700,
+        duration: Duration(seconds: 50),
+      );
+
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
+    });
   }
 
   int _current = 0;
@@ -57,181 +78,185 @@ class _HomeScreenState extends State<HomeScreen> {
                   future: futureTopThumbnails,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return Column(children: [
-                        CarouselSlider(
-                          items: snapshot.data!.map((data) {
-                            return Builder(builder: (BuildContext context) {
-                              return Container(
-                                margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
-                                height:
-                                MediaQuery
-                                    .of(context)
-                                    .size
-                                    .height * 0.5,
-                                width:
-                                MediaQuery
-                                    .of(context)
-                                    .size
-                                    .width * 1.9,
-                                child:
-                                GridTile(
-                                  header: GridTileBar(
-                                    leading: Badge(
-                                      toAnimate: false,
-                                      shape: BadgeShape.square,
-                                      badgeColor: Color(0xff80cbc4),
-                                      borderRadius: BorderRadius.circular(8),
-                                      badgeContent: Text('${data.kind}',
-                                          style: TextStyle(color: Colors.white,
-                                              fontSize: 17)),
-                                    ),
-                                    title: Text(''),
+                      if(snapshot.data!.length>0){
+                        return Column(children: [
+                          CarouselSlider(
+                            items: snapshot.data!.map((data) {
+                              return Builder(builder: (BuildContext context) {
+                                return Container(
+                                  margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                                  height:
+                                  MediaQuery
+                                      .of(context)
+                                      .size
+                                      .height * 0.5,
+                                  width:
+                                  MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width * 1.9,
+                                  child:
+                                  GridTile(
+                                    header: GridTileBar(
+                                      leading: Badge(
+                                        toAnimate: false,
+                                        shape: BadgeShape.square,
+                                        badgeColor: Color(0xff80cbc4),
+                                        borderRadius: BorderRadius.circular(8),
+                                        badgeContent: Text('Rekomendasi ',
+                                            style: TextStyle(color: Colors.white,
+                                                fontSize: 17)),
+                                      ),
+                                      title: Text(''),
 
-                                  ),
-                                  child: ShaderMask(
-                                      shaderCallback: (rect) {
-                                        return LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Colors.transparent,
-                                            Colors.black
-                                          ],
-                                        ).createShader(Rect.fromLTRB(0, -20,
-                                            rect.width, rect.height - 20));
-                                      },
-                                      blendMode: BlendMode.darken,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          // gradient: LinearGradient(
-                                          //   colors: [gradientStart, gradientEnd],
-                                          //   begin: FractionalOffset(0, 0),
-                                          //   end: FractionalOffset(0, 1),
-                                          //   stops: [0.0, 1.0],
-                                          //   tileMode: TileMode.clamp
-                                          // ),
-                                          image: DecorationImage(
-                                            image: NetworkImage(
-                                                IMG_URL + data.cover),
-                                            fit: BoxFit.cover,
+                                    ),
+                                    child: ShaderMask(
+                                        shaderCallback: (rect) {
+                                          return LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.black
+                                            ],
+                                          ).createShader(Rect.fromLTRB(0, -20,
+                                              rect.width, rect.height - 20));
+                                        },
+                                        blendMode: BlendMode.darken,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            // gradient: LinearGradient(
+                                            //   colors: [gradientStart, gradientEnd],
+                                            //   begin: FractionalOffset(0, 0),
+                                            //   end: FractionalOffset(0, 1),
+                                            //   stops: [0.0, 1.0],
+                                            //   tileMode: TileMode.clamp
+                                            // ),
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                  IMG_URL + data.cover),
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
-                                        ),
-                                      )),
-                                  footer: Container( // You can use GridTileBar instead
-                                    child: Column(
-                                        children: [
-                                          Text(
-                                            '${data.nama}',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          SizedBox(
-                                              height: 10
-                                          ),
-                                          Row(
-                                                  children: [
-                                                    if(double.parse(data.rating_mean)>0) ...[
+                                        )),
+                                    footer: Container( // You can use GridTileBar instead
+                                      child: Column(
+                                          children: [
+                                            Text(
+                                              '${data.nama}',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                                height: 10
+                                            ),
+                                            Row(
+                                                children: [
+                                                  if(double.parse(data.rating_mean)>0) ...[
+                                                    Text(
+                                                        '${formatCurrency
+                                                            .format(int.parse(
+                                                            data.harga))} | ',
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .white,
+                                                            fontSize: 15)),
+                                                    RatingBarIndicator(
+                                                      rating: double.parse(data.rating_mean),
+                                                      itemBuilder: (context,
+                                                          index) =>
+                                                          Icon(
+                                                            Icons.star,
+                                                            color: Colors
+                                                                .amber,
+                                                          ),
+                                                      itemCount: 5,
+                                                      itemSize: 15.0,
+                                                      direction: Axis.horizontal,
+                                                    ),
+                                                    Text(
+                                                      ' (${data.rating_mean})',
+                                                      style: TextStyle(
+                                                          color:
+                                                          Colors.yellow,
+                                                          fontWeight : FontWeight.bold,
+                                                          fontSize: 15),
+                                                    ),
+                                                  ]
+                                                  else
+                                                    ...[
                                                       Text(
                                                           '${formatCurrency
-                                                              .format(int.parse(
-                                                              data.harga))} | ',
+                                                              .format(
+                                                              int.parse(data
+                                                                  .harga))} | ',
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .white,
                                                               fontSize: 15)),
-                                                      RatingBarIndicator(
-                                                        rating: double.parse(data.rating_mean),
-                                                        itemBuilder: (context,
-                                                            index) =>
-                                                            Icon(
-                                                              Icons.star,
+                                                      Text('Belum dirating',
+                                                          style: TextStyle(
                                                               color: Colors
-                                                                  .amber,
-                                                            ),
-                                                        itemCount: 5,
-                                                        itemSize: 15.0,
-                                                        direction: Axis.horizontal,
-                                                      ),
-                                                      Text(
-                                                        ' (${data.rating_mean})',
-                                                        style: TextStyle(
-                                                            color:
-                                                            Colors.yellow,
-                                                            fontWeight : FontWeight.bold,
-                                                            fontSize: 15),
-                                                      ),
+                                                                  .white,
+                                                              fontSize: 13))
                                                     ]
-                                                    else
-                                                      ...[
-                                                        Text(
-                                                            '${formatCurrency
-                                                                .format(
-                                                                int.parse(data
-                                                                    .harga))} | ',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 15)),
-                                                        Text('Belum dirating',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 13))
-                                                      ]
-                                                  ]
-                                              )
-                                        ]),
-                                    width: double.infinity,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 15),
+                                                ]
+                                            )
+                                          ]),
+                                      width: double.infinity,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 15),
+                                    ),
                                   ),
+                                );
+                              });
+                            }).toList(),
+                            carouselController: _controller,
+                            options: CarouselOptions(
+                              height: 170.0,
+                              autoPlay: true,
+                              autoPlayInterval: Duration(seconds: 3),
+                              autoPlayAnimationDuration:
+                              Duration(milliseconds: 800),
+                              autoPlayCurve: Curves.fastOutSlowIn,
+                              pauseAutoPlayOnTouch: true,
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  _current = index;
+                                });
+                              },
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: snapshot.data!.asMap().entries.map((entry) {
+                              return GestureDetector(
+                                onTap: () => _controller.animateToPage(entry.key),
+                                child: Container(
+                                  width: 8.0,
+                                  height: 8.0,
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 12, horizontal: 4.0),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: (Theme
+                                          .of(context)
+                                          .brightness ==
+                                          Brightness.dark
+                                          ? Colors.white
+                                          : Color(0xff80cbc4))
+                                          .withOpacity(
+                                          _current == entry.key ? 1 : 0.4)),
                                 ),
                               );
-                            });
-                          }).toList(),
-                          carouselController: _controller,
-                          options: CarouselOptions(
-                            height: 170.0,
-                            autoPlay: true,
-                            autoPlayInterval: Duration(seconds: 3),
-                            autoPlayAnimationDuration:
-                            Duration(milliseconds: 800),
-                            autoPlayCurve: Curves.fastOutSlowIn,
-                            pauseAutoPlayOnTouch: true,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                _current = index;
-                              });
-                            },
+                            }).toList(),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: snapshot.data!.asMap().entries.map((entry) {
-                            return GestureDetector(
-                              onTap: () => _controller.animateToPage(entry.key),
-                              child: Container(
-                                width: 8.0,
-                                height: 8.0,
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 12, horizontal: 4.0),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: (Theme
-                                        .of(context)
-                                        .brightness ==
-                                        Brightness.dark
-                                        ? Colors.white
-                                        : Color(0xff80cbc4))
-                                        .withOpacity(
-                                        _current == entry.key ? 1 : 0.4)),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ]);
+                        ]);
+                      } else {
+                        return Text("Belum ada data");
+                      }
                     } else if (snapshot.hasError) {
                       return Text("${snapshot.error}");
                     }
@@ -267,7 +292,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-                          child: Row(
+                          child:
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => BookingList()),
+                              );
+                            },
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.format_list_bulleted_rounded,
@@ -282,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
-                              ]),
+                              ])),
                         )),
                     SizedBox(
                       height: 15,
@@ -541,9 +575,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ]),
                               ),
                             ),
-                            Text('Lihat semua',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 16)),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) =>DaftarLengkap()));
+                              },
+                              child: Text('Lihat semua',
+                                  style: TextStyle(
+                                      color: Colors.blue, fontSize: 16)),
+                            )
+
                           ],
                         ),
                         SizedBox(
@@ -708,23 +749,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                               10.0),
                                                                         ),
                                                                         onPressed: () {
-                                                                          Navigator
-                                                                              .push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                                builder: (
-                                                                                    context) =>
-                                                                                    BookingForm(
-                                                                                        vendor: snapshot
-                                                                                            .data![index])),
-                                                                          );
+                                                                          snapshot.data![index].is_ordered == 0 ?
+                                                                          Navigator.push(context, MaterialPageRoute(
+                                                                                builder: (context) =>
+                                                                                    BookingForm(vendor: snapshot.data![index])),) : null;
                                                                         },
                                                                         padding:
                                                                         EdgeInsets
                                                                             .all(
                                                                             5.0),
-                                                                        color: Color(
-                                                                            0xff80cbc4),
+                                                                        color: snapshot.data![index].is_ordered == 0 ? Color(0xff80cbc4) : Colors.grey,
                                                                         textColor: Colors
                                                                             .white,
                                                                         child: Text(

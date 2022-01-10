@@ -44,7 +44,8 @@ class _DaftarButikState extends State<DaftarButik> {
           future: futureVendorBusana,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return ListView.builder(
+              if(snapshot.data!.length>0)
+                return ListView.builder(
                   padding: EdgeInsets.all(10),
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
@@ -98,26 +99,31 @@ class _DaftarButikState extends State<DaftarButik> {
                                         ),
                                         Align(
                                           alignment:
-                                          Alignment.centerRight,
+                                          Alignment
+                                              .centerRight,
                                           child: RaisedButton(
                                             shape:
                                             RoundedRectangleBorder(
                                               borderRadius:
                                               BorderRadius
-                                                  .circular(10.0),
+                                                  .circular(
+                                                  10.0),
                                             ),
                                             onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => BookingForm(vendor : snapshot.data![index])),
-                                              );
+                                              snapshot.data![index].is_ordered == 0 ?
+                                              Navigator.push(context, MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BookingForm(vendor: snapshot.data![index])),) : null;
                                             },
                                             padding:
-                                            EdgeInsets.all(5.0),
-                                            color: Color(0xff80cbc4),
-                                            textColor: Colors.white,
-                                            child: Text("Pesan",
+                                            EdgeInsets
+                                                .all(
+                                                5.0),
+                                            color: snapshot.data![index].is_ordered == 0 ? Color(0xff80cbc4) : Colors.grey,
+                                            textColor: Colors
+                                                .white,
+                                            child: Text(
+                                                "Pesan",
                                                 style: TextStyle(
                                                     fontSize: 15)),
                                           ),
@@ -129,6 +135,10 @@ class _DaftarButikState extends State<DaftarButik> {
                       );
 
                   });
+              else
+                return Center(
+                    child: Text('Tidak ada data',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)));
             } else if (snapshot.hasError) {
               return Text("${snapshot.error}");
             }
