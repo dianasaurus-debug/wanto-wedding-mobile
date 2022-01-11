@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:dream_wedding_app/Controllers/auth.dart';
 import 'package:dream_wedding_app/Controllers/user.dart';
 import 'package:dream_wedding_app/Models/user.dart';
+import 'package:dream_wedding_app/Screens/bantuan.dart';
 import 'package:dream_wedding_app/Screens/login_screen.dart';
 import 'package:dream_wedding_app/Screens/profile_detail.dart';
 import 'package:dream_wedding_app/Screens/setting_screen.dart';
@@ -170,7 +171,12 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   borderRadius: BorderRadius.circular(15)),
                               backgroundColor: Color(0xFFF5F6F9),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => BantuanScreen()),
+                              );
+                            },
                             child: Row(
                               children: [
                                 Icon(

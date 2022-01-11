@@ -145,8 +145,9 @@ class _PasswordUpdateState extends State<PasswordUpdate> {
       '_method': 'PUT'
     };
 
-    var res = await AuthNetwork().authData(data, '/change/password');
+    var res = await AuthNetwork().postData(data, '/change/password');
     var body = json.decode(res.body);
+    print(body);
     if (body['success']) {
       Navigator.push(
         context,
