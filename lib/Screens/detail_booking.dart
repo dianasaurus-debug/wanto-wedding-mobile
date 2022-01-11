@@ -110,8 +110,7 @@ class _DetailBookingState extends State<DetailBooking> {
                                           10.0),
                                     ),
                                     onPressed: () {
-                                      // cancelBooking(
-                                      //     snapshot.data![index].id);
+                                      cancelBooking(snapshot.data!.id);
                                     },
                                     padding: EdgeInsets.all(5.0),
                                     color: Colors.red,
@@ -462,6 +461,57 @@ class _DetailBookingState extends State<DetailBooking> {
       print(res["message"]);
     }
   }
+  void cancelBooking(id) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Yakin ingin membatalkan order?",
+      desc: "Jika ingin order lagi harap hubungi admin.",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Batalkan Order",
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          ),
+          onPressed: () async {
+            var res = await BookingNetwork().cancelBooking(id);
+            var body = json.decode(res.body);
+            if (body["success"] == true) {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (BuildContext context) => super.widget));
+            } else {
+              Alert(
+                context: context,
+                type: AlertType.error,
+                title: "Gagal Membatalkan order!",
+                desc: "Terdapat kesalahan.",
+                buttons: [
+                  DialogButton(
+                    child: Text(
+                      "OK",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    width: 120,
+                  )
+                ],
+              ).show();
+            }
+          },
+          color: Colors.red,
+        ),
+        DialogButton(
+          child: Text(
+            "Tidak jadi",
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.blue,
+        )
+      ],
+    ).show();
+
+  }
   void addReview(booking, score, comment) async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user_id = jsonDecode(localStorage.getString('user'))['id'];
@@ -536,7 +586,6 @@ class _DetailBookingState extends State<DetailBooking> {
 
   // user defined function
   void _showDetailRating(review) {
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
