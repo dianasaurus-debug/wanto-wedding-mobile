@@ -202,8 +202,8 @@ class _BookingFormState extends State<BookingForm> {
                               onShowPicker: (context, currentValue) async {
                                 final date = await showDatePicker(
                                     context: context,
-                                    firstDate: DateTime.now().add(Duration(days: 31)),
-                                    initialDate: currentValue ?? DateTime.now().add(Duration(days: 31)),
+                                    firstDate: DateTime.now().add(Duration(days: 34)),
+                                    initialDate: currentValue ?? DateTime.now().add(Duration(days: 35)),
                                     lastDate: DateTime(2100));
                                 if (date != null) {
                                   final time = await showTimePicker(

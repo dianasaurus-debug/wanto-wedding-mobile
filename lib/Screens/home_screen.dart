@@ -12,6 +12,7 @@ import 'package:dream_wedding_app/Screens/daftar_catering.dart';
 import 'package:dream_wedding_app/Screens/daftar_makeup.dart';
 import 'package:dream_wedding_app/Screens/daftar_paket_lengkap.dart';
 import 'package:dream_wedding_app/Screens/detail_jasa_screen.dart';
+import 'package:dream_wedding_app/Screens/notifications.dart';
 import 'package:dream_wedding_app/Utils/constants.dart';
 import 'package:dream_wedding_app/Widgets/app_bar.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -37,26 +38,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    messaging = FirebaseMessaging.instance;
-    messaging.getToken().then((value){
-      print(value);
-    });
+
     // TODO: implement initState
     super.initState();
     futureTopThumbnails = VendorNetwork().getThumbnails();
     futurePaketLengkap = VendorNetwork().getAllPaketLengkap();
+    messaging = FirebaseMessaging.instance;
+    messaging.getToken().then((value){
+      print(value);
+    });
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       showSimpleNotification(
-        Text(event.notification!.title!),
-        leading: Icon(Icons.warning_rounded, color : Colors.red),
+        Text(event.notification!.title!, style:TextStyle(fontSize: 16, color: Color(0xff80cbc4))),
         subtitle: Text(event.notification!.body!),
-        background: Colors.cyan.shade700,
-        duration: Duration(seconds: 50),
+        background: Colors.white,
+        duration: Duration(seconds: 20),
       );
-
     });
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('Message clicked!');
+      Route route = MaterialPageRoute(
+          builder: (context) => NotificationScreen());
+      Navigator.push(context, route);
     });
   }
 

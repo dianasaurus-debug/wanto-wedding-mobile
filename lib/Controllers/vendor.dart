@@ -1,3 +1,4 @@
+import 'package:dream_wedding_app/Models/notification.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -76,6 +77,20 @@ class VendorNetwork {
       var json = jsonDecode(res.body);
       var data = json['data'];
       return data;
+    } else {
+      throw Exception('Failed to fetch data');
+    }
+  }
+  Future<List<NotificationModel>> getAllNotifications() async {
+    var full_url = API_URL+'/notifications';
+    await _getToken();
+    final res = await http.get( Uri.parse(full_url),
+        headers: _setHeaders());
+
+    if (res.statusCode == 200) {
+      var json = jsonDecode(res.body);
+      List data = json['data'];
+      return data.map((notifikasi) => new NotificationModel.fromJson(notifikasi)).toList();
     } else {
       throw Exception('Failed to fetch data');
     }

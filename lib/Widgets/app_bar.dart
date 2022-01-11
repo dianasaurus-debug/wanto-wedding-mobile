@@ -4,6 +4,7 @@ import 'package:dream_wedding_app/Controllers/vendor.dart';
 import 'package:dream_wedding_app/Screens/booking_list.dart';
 import 'package:dream_wedding_app/Screens/detail_jasa_screen.dart';
 import 'package:dream_wedding_app/Screens/jasa_screen.dart';
+import 'package:dream_wedding_app/Screens/notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -77,7 +78,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => BookingList()),
+                MaterialPageRoute(builder: (context) => NotificationScreen()),
               );
             }),
         IconButton(
