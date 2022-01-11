@@ -52,21 +52,13 @@ class _KatalogScreenState extends State<KatalogScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
         title: Text(
           'Katalog',
           style: TextStyle(color: Colors.black),
         ),
-        actions: [
-          IconButton(
-              icon:
-                  Icon(Icons.notifications_outlined, color: Color(0xff80cbc4)),
-              onPressed: () {}),
-          IconButton(
-              icon:
-                  Icon(Icons.shopping_cart_outlined, color: Color(0xff80cbc4)),
-              onPressed: () {}),
-        ],
+        iconTheme: IconThemeData(
+          color: Color(0xff80cbc4), //change your color here
+        ),
       ),
       body: Container(
           padding : EdgeInsets.all(12),
