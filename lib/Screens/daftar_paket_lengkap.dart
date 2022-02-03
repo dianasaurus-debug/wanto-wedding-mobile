@@ -7,11 +7,15 @@ import 'package:dream_wedding_app/Models/vendor.dart';
 import 'package:dream_wedding_app/Screens/booking_form_screen.dart';
 import 'package:dream_wedding_app/Screens/detail_booking.dart';
 import 'package:dream_wedding_app/Screens/detail_jasa_screen.dart';
+import 'package:dream_wedding_app/Screens/login_screen.dart';
+import 'package:dream_wedding_app/Screens/register_screen.dart';
 import 'package:dream_wedding_app/Utils/constants.dart';
 import 'package:dream_wedding_app/Widgets/app_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DaftarLengkap extends StatefulWidget {
   @override
@@ -21,13 +25,56 @@ class DaftarLengkap extends StatefulWidget {
 class _DaftarLengkapState extends State<DaftarLengkap> {
   final formatCurrency = new NumberFormat.simpleCurrency(locale: 'id_ID');
   late Future<List<Vendor>> futureVendorLengkap;
-
+  bool isAuth = false;
+  void _checkIfLoggedIn() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+    if(token != null){
+      setState(() {
+        isAuth = true;
+      });
+    }
+  }
   @override
   void initState() {
     // TODO: implement initState
-    futureVendorLengkap = VendorNetwork().getVendor("1");
+    futureVendorLengkap = isAuth == true ? VendorNetwork().getVendor("1") : VendorNetwork().getVendorGlobal("1");
   }
+  void loginAlert() {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Anda harus login/daftar",
+      desc: "Untuk membuat pesanan Anda harus terdaftar sebagai customer",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Login",
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          ),
+          onPressed: () async {
+            Route route = MaterialPageRoute(
+                builder: (context) => LoginScreen());
+            Navigator.push(context, route);
+          },
+          color: Colors.green,
+        ),
+        DialogButton(
+          child: Text(
+            "Daftar",
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          ),
+          onPressed: () async {
+            Route route = MaterialPageRoute(
+                builder: (context) => RegisterScreen());
+            Navigator.push(context, route);
+          },
+          color: Colors.green,
+        )
+      ],
+    ).show();
 
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -111,16 +158,21 @@ class _DaftarLengkapState extends State<DaftarLengkap> {
                                                     10.0),
                                               ),
                                               onPressed: () {
-                                                snapshot.data![index].is_ordered == 0 ?
-                                                Navigator.push(context, MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        BookingForm(vendor: snapshot.data![index])),) : null;
+                                                if(isAuth==true){
+                                                  snapshot.data![index].is_ordered == 0 ?
+                                                  Navigator.push(context, MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          BookingForm(vendor: snapshot.data![index])),) : null;
+                                                } else {
+                                                  loginAlert();
+                                                }
+
                                               },
                                               padding:
                                               EdgeInsets
                                                   .all(
                                                   5.0),
-                                              color: snapshot.data![index].is_ordered == 0 ? Color(0xff80cbc4) : Colors.grey,
+                                              color: snapshot.data![index].is_ordered == 0 || isAuth==false ? Color(0xff80cbc4) : Colors.grey,
                                               textColor: Colors
                                                   .white,
                                               child: Text(

@@ -5,6 +5,7 @@ import 'package:dream_wedding_app/Controllers/auth.dart';
 import 'package:dream_wedding_app/Controllers/bank_account.dart';
 import 'package:dream_wedding_app/Controllers/vendor.dart';
 import 'package:dream_wedding_app/Models/bank_account.dart';
+import 'package:dream_wedding_app/Models/service_tambahan.dart';
 import 'package:dream_wedding_app/Models/vendor.dart';
 import 'package:dream_wedding_app/Screens/konfirmasi_bayar.dart';
 import 'package:dream_wedding_app/Utils/constants.dart';
@@ -17,6 +18,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 
 class BookingForm extends StatefulWidget {
   final Vendor vendor;
+
   const BookingForm({Key? key, required this.vendor}) : super(key: key);
 
   @override
@@ -27,7 +29,16 @@ class _BookingFormState extends State<BookingForm> {
   late Future<List<BankAccount>> futureBank;
   final formatCurrency = new NumberFormat.simpleCurrency(locale: 'id_ID');
   late BankAccount selected_bank_account;
-
+  final List<ServiceTambahan> list_of_service = [
+    new ServiceTambahan(
+        id: 0, nama_service: 'Siraman', harga: '500000', is_check: false),
+    new ServiceTambahan(
+        id: 1, nama_service: 'Live Band', harga: '8000000', is_check: false),
+    new ServiceTambahan(
+        id: 2, nama_service: 'Stand Up Comedy', harga: '10000000', is_check: false),
+    new ServiceTambahan(
+        id: 3, nama_service: 'Dangdut', harga: '5000000', is_check: false),
+  ];
   final maxLines = 5;
   final format = DateFormat("yyyy-MM-dd HH:mm");
   int selected = -1;
@@ -45,6 +56,11 @@ class _BookingFormState extends State<BookingForm> {
   void initState() {
     super.initState();
     futureBank = BankAccountNetwork().getBankAccount();
+  }
+  void itemChange(bool val, int index) {
+    setState(() {
+      list_of_service[index].is_check = val;
+    });
   }
 
   Widget _buildPlayerModelList(int index, BankAccount items) {
@@ -146,7 +162,7 @@ class _BookingFormState extends State<BookingForm> {
                         ),
                         SizedBox(width: 5),
                         Expanded(
-                          child:Padding(
+                          child: Padding(
                               padding: EdgeInsets.fromLTRB(5, 10, 0, 10),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -156,8 +172,8 @@ class _BookingFormState extends State<BookingForm> {
                                       style: TextStyle(fontSize: 17)),
                                   SizedBox(height: 10),
                                   Text(
-                                      formatCurrency
-                                          .format(int.parse(widget.vendor.harga)),
+                                      formatCurrency.format(
+                                          int.parse(widget.vendor.harga)),
                                       style: TextStyle(
                                           color: Color(0xff80cbc4),
                                           fontSize: 15)),
@@ -171,16 +187,16 @@ class _BookingFormState extends State<BookingForm> {
                     ),
                     SizedBox(height: 8),
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:[
-                        Text('Pilih Tanggal',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                        Text(' (pastikan 1 bulan setelah hari ini)',
-                              style: TextStyle(fontSize: 15, color: Colors.red)),
-                      ]
-                    ),
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Pilih Tanggal',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18)),
+                          Text(' (pastikan 1 bulan setelah hari ini)',
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.red)),
+                        ]),
                     SizedBox(
                       height: 10,
                     ),
@@ -202,8 +218,10 @@ class _BookingFormState extends State<BookingForm> {
                               onShowPicker: (context, currentValue) async {
                                 final date = await showDatePicker(
                                     context: context,
-                                    firstDate: DateTime.now().add(Duration(days: 34)),
-                                    initialDate: currentValue ?? DateTime.now().add(Duration(days: 35)),
+                                    firstDate:
+                                        DateTime.now().add(Duration(days: 34)),
+                                    initialDate: currentValue ??
+                                        DateTime.now().add(Duration(days: 35)),
                                     lastDate: DateTime(2100));
                                 if (date != null) {
                                   final time = await showTimePicker(
@@ -220,7 +238,8 @@ class _BookingFormState extends State<BookingForm> {
                                 if (start_booking_value! == null) {
                                   return 'Mohon masukkan tanggal mulai';
                                 }
-                                start_booking = start_booking_value.toIso8601String();
+                                start_booking =
+                                    start_booking_value.toIso8601String();
                                 return null;
                               },
                             ),
@@ -259,14 +278,17 @@ class _BookingFormState extends State<BookingForm> {
                                 if (end_booking_value! == null) {
                                   return 'Mohon masukkan tanggal berakhir';
                                 }
-                                end_booking = end_booking_value.toIso8601String();
+                                end_booking =
+                                    end_booking_value.toIso8601String();
                                 return null;
                               },
                               onShowPicker: (context, currentValue) async {
                                 final date = await showDatePicker(
                                     context: context,
-                                    firstDate: DateTime.now().add(Duration(days: 31)),
-                                    initialDate: currentValue ?? DateTime.now().add(Duration(days: 31)),
+                                    firstDate:
+                                        DateTime.now().add(Duration(days: 31)),
+                                    initialDate: currentValue ??
+                                        DateTime.now().add(Duration(days: 31)),
                                     lastDate: DateTime(2100));
                                 if (date != null) {
                                   final time = await showTimePicker(
@@ -388,6 +410,82 @@ class _BookingFormState extends State<BookingForm> {
                           ],
                         )),
                     SizedBox(height: 10),
+                    Divider(
+                      color: Color(0xff80cbc4),
+                    ),
+                    SizedBox(height: 8),
+                    Text('Layanan Tambahan',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18)),
+                    SizedBox(height: 10),
+                    Container(
+                        padding: EdgeInsets.all(10),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              spreadRadius: 3,
+                              blurRadius: 5,
+                              offset:
+                                  Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                            itemCount: list_of_service.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return new Card(
+                                  child: new Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    new CheckboxListTile(
+                                      activeColor: Colors.pink[300],
+                                      dense: true,
+                                      //font change
+                                      title: new Column(
+                                        mainAxisAlignment : MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children:[
+                                          Text(
+                                            list_of_service[index].nama_service,
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.5),
+                                          ),
+                                          Text(
+                                            formatCurrency.format(
+                                                int.parse(list_of_service[index].harga)),
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color:Colors.green,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.5),
+                                          )
+                                        ]
+                                      ),
+                                      value: list_of_service[index].is_check,
+                                      onChanged: (bool? value) {
+                                        itemChange(value!, index);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ));
+                            })),
+                    SizedBox(height: 10),
+                    Divider(
+                      color: Color(0xff80cbc4),
+                    ),
+                    SizedBox(height: 15),
                     Text('Catatan untuk Vendor',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18)),
@@ -397,12 +495,13 @@ class _BookingFormState extends State<BookingForm> {
                       width: double.infinity,
                       height: maxLines * 24.0,
                       child: TextField(
-                        maxLines: maxLines,
-                        decoration: InputDecoration(
-                          hintText: "Masukkan catatan",
-                        ),
-                        onChanged: (newText) { deskripsi = newText; }
-                      ),
+                          maxLines: maxLines,
+                          decoration: InputDecoration(
+                            hintText: "Masukkan catatan",
+                          ),
+                          onChanged: (newText) {
+                            deskripsi = newText;
+                          }),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
@@ -466,35 +565,36 @@ class _BookingFormState extends State<BookingForm> {
                   ],
                 ))));
   }
-  void _booking()
-  async{
+
+  void _booking() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user_id = jsonDecode(localStorage.getString('user'))['id'];
     var data = {
-    'start_booking' : start_booking,
-    'end_booking' : end_booking,
-    'customer_id' : user_id,
-    'product_id' : widget.vendor.id,
-    'deskripsi' : deskripsi,
-    'nominal' : widget.vendor.nominal_dp,
-    'bank_account_id' : bank_account_id,
+      'start_booking': start_booking,
+      'end_booking': end_booking,
+      'customer_id': user_id,
+      'product_id': widget.vendor.id,
+      'deskripsi': deskripsi,
+      'nominal': widget.vendor.nominal_dp,
+      'bank_account_id': bank_account_id,
     };
     var res = await AuthNetwork().postData(data, '/booking/pesan');
     var body = json.decode(res.body);
     print(body);
-    if(body['success']){
+    if (body['success']) {
       Navigator.push(
         context,
         new MaterialPageRoute(
-            builder: (context) => KonfirmasiBayarScreen(id_booking : body['data']['id'])
-        ),
+            builder: (context) =>
+                KonfirmasiBayarScreen(id_booking: body['data']['id'])),
       );
     } else {
       Alert(
         context: context,
         type: AlertType.error,
         title: "Pemesanan Gagal!",
-        desc: "Pastikan tanggal pemesanan sesuai (harus lebih dari 1 bulan setelah hari ini).",
+        desc:
+            "Pastikan tanggal pemesanan sesuai (harus lebih dari 1 bulan setelah hari ini).",
         buttons: [
           DialogButton(
             child: Text(

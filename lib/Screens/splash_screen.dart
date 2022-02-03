@@ -78,18 +78,10 @@ class _SplashScreenState extends State<SplashScreen> {
                     backgroundColor: Color(0xff80cbc4),
                   ),
                   onPressed: () => {
-                  if (isAuth) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => BottomNavigation()),
                     )
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                    )
-                  }
-
                   },
                   child: Text(
                     "Lanjutkan",

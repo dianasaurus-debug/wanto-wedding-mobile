@@ -117,24 +117,7 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                                     SizedBox(height: 8),
                                     Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Harga Total Jasa',
-                                              style: TextStyle(
-                                                  color: Colors.grey)),
-                                          SizedBox(height: 5),
-                                          Text(
-                                              formatCurrency.format(int.parse(
-                                                  snapshot.data!.vendor.harga)),
-                                              style: TextStyle(
-                                                  color: Color(0xff80cbc4),
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold)),
-                                        ]),
-                                    SizedBox(height: 8),
-                                    Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         children: [
                                           Text('Informasi Pembayaran DP',
                                               style: TextStyle(
@@ -157,18 +140,18 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                                             ),
                                             child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
 
                                                 Column(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                                    CrossAxisAlignment
+                                                        .start,
                                                     children: [
                                                       Text('Nominal DP',
                                                           style: TextStyle(
                                                               color:
-                                                                  Colors.grey)),
+                                                              Colors.grey)),
                                                       SizedBox(height: 5),
                                                       Text(
                                                           formatCurrency.format(
@@ -181,12 +164,12 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                                                                   0xff80cbc4),
                                                               fontSize: 18,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
+                                                              FontWeight
+                                                                  .bold)),
                                                       Text('Kode Unik',
                                                           style: TextStyle(
                                                               color:
-                                                                  Colors.grey)),
+                                                              Colors.grey)),
                                                       SizedBox(height: 5),
                                                       Text(
                                                           '${snapshot.data!.payment![0].kode_unik}',
@@ -195,8 +178,8 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                                                                   0xff80cbc4),
                                                               fontSize: 18,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
+                                                              FontWeight
+                                                                  .bold)),
                                                     ]),
                                                 SizedBox(height: 5),
                                                 Divider(
@@ -208,13 +191,13 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                                                     style: TextStyle(
                                                         color: Colors.black,
                                                         fontWeight:
-                                                            FontWeight.bold),
+                                                        FontWeight.bold),
                                                   ),
                                                   Text(
                                                       '${snapshot.data!.payment![0].bankAccount.nama_bank}',
                                                       style: TextStyle(
                                                           color:
-                                                              Color(0xff80cbc4),
+                                                          Color(0xff80cbc4),
                                                           fontSize: 15)),
                                                 ]),
                                                 RichText(
@@ -223,41 +206,183 @@ class _KonfirmasiBayarScreenState extends State<KonfirmasiBayarScreen> {
                                                         style: TextStyle(
                                                             color: Colors.black,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                            FontWeight
+                                                                .bold),
                                                         children: <TextSpan>[
-                                                      TextSpan(
-                                                          text:
+                                                          TextSpan(
+                                                              text:
                                                               '${snapshot.data!.payment![0].bankAccount.acc_holder}',
-                                                          style: TextStyle(
-                                                              color: Color(
-                                                                  0xff80cbc4),
-                                                              fontSize: 15))
-                                                    ])),
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xff80cbc4),
+                                                                  fontSize: 15))
+                                                        ])),
                                                 SizedBox(height: 5),
                                                 RichText(
                                                     text: TextSpan(
                                                         text:
-                                                            'Nomor Rekening : ',
+                                                        'Nomor Rekening : ',
                                                         style: TextStyle(
                                                             color: Colors.black,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                            FontWeight
+                                                                .bold),
                                                         children: <TextSpan>[
-                                                      TextSpan(
-                                                          text:
+                                                          TextSpan(
+                                                              text:
                                                               '${snapshot.data!.payment![0].bankAccount.nomor_rekening}',
-                                                          style: TextStyle(
-                                                              color: Color(
-                                                                  0xff80cbc4),
-                                                              fontSize: 15))
-                                                    ])),
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xff80cbc4),
+                                                                  fontSize: 15))
+                                                        ])),
                                               ],
                                             ),
                                           ),
                                         ]),
+                                    SizedBox(height: 8),
+                                    Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Informasi Paket Tambahan',
+                                              style: TextStyle(
+                                                  color: Colors.grey)),
+                                          SizedBox(height: 5),
+                                          Container(
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.1),
+                                                  spreadRadius: 3,
+                                                  blurRadius: 3,
+                                                  offset: Offset(0,
+                                                      3), // changes position of shadow
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+
+                                                Column(
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .start,
+                                                    children: [
+                                                      Text('Siraman',
+                                                          style: TextStyle(
+                                                              color:
+                                                              Colors.grey)),
+                                                      SizedBox(height: 5),
+                                                      Text(
+                                                          formatCurrency.format(
+                                                              int.parse('500000')),
+                                                          style: TextStyle(
+                                                              color: Color(
+                                                                  0xff80cbc4),
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold)),
+                                                      SizedBox(height: 5),
+                                                      Text('Live Band',
+                                                          style: TextStyle(
+                                                              color:
+                                                              Colors.grey)),
+                                                      SizedBox(height: 5),
+                                                      Text(
+                                                          formatCurrency.format(
+                                                              int.parse('8000000')),
+                                                          style: TextStyle(
+                                                              color: Color(
+                                                                  0xff80cbc4),
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold)),
+                                                    ]),
+                                                SizedBox(height: 5),
+                                                Divider(
+                                                  color: Color(0xff80cbc4),
+                                                ),
+                                                Row(children: [
+                                                  Text(
+                                                    'Nama Bank : ',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                        FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                      '${snapshot.data!.payment![0].bankAccount.nama_bank}',
+                                                      style: TextStyle(
+                                                          color:
+                                                          Color(0xff80cbc4),
+                                                          fontSize: 15)),
+                                                ]),
+                                                RichText(
+                                                    text: TextSpan(
+                                                        text: 'Atas Nama : ',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold),
+                                                        children: <TextSpan>[
+                                                          TextSpan(
+                                                              text:
+                                                              '${snapshot.data!.payment![0].bankAccount.acc_holder}',
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xff80cbc4),
+                                                                  fontSize: 15))
+                                                        ])),
+                                                SizedBox(height: 5),
+                                                RichText(
+                                                    text: TextSpan(
+                                                        text:
+                                                        'Nomor Rekening : ',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold),
+                                                        children: <TextSpan>[
+                                                          TextSpan(
+                                                              text:
+                                                              '${snapshot.data!.payment![0].bankAccount.nomor_rekening}',
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xff80cbc4),
+                                                                  fontSize: 15))
+                                                        ])),
+                                              ],
+                                            ),
+                                          ),
+                                        ]),
+                                    SizedBox(height: 8),
+                                    Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Harga Total Jasa',
+                                              style: TextStyle(
+                                                  color: Colors.grey)),
+                                          SizedBox(height: 5),
+                                          Text(
+                                              formatCurrency.format(int.parse('63500000')),
+                                              style: TextStyle(
+                                                  color: Color(0xff80cbc4),
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold)),
+                                        ]),
                                     SizedBox(height: 10),
+
                                   ],
                                 )),
                             SizedBox(height: 20),

@@ -4,7 +4,9 @@ import 'package:dream_wedding_app/Controllers/vendor.dart';
 import 'package:dream_wedding_app/Screens/booking_list.dart';
 import 'package:dream_wedding_app/Screens/detail_jasa_screen.dart';
 import 'package:dream_wedding_app/Screens/jasa_screen.dart';
+import 'package:dream_wedding_app/Screens/login_screen.dart';
 import 'package:dream_wedding_app/Screens/notifications.dart';
+import 'package:dream_wedding_app/Screens/register_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -13,14 +15,16 @@ import 'package:intl/intl.dart';
 
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBar appBar;
+  final isAuth;
 
   /// you can add more fields that meet your needs
 
-  const BaseAppBar({Key? key, required this.appBar})
+  const BaseAppBar({Key? key, required this.appBar, required this.isAuth})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
     final formatCurrency = new NumberFormat.simpleCurrency(locale: 'id_ID');
     return AppBar(
       backgroundColor: Colors.white,
@@ -71,7 +75,26 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       //     ),
       //   ),
       // ),
-      actions: [
+      actions:  (isAuth ==false) ? [
+      IconButton(
+          icon: Icon(Icons.login,
+              color: Color(0xff80cbc4)),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
+          }),
+        IconButton(
+            icon: Icon(Icons.app_registration,
+                color: Color(0xff80cbc4)),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RegisterScreen()),
+              );
+            }),
+      ] : [
         IconButton(
             icon: Icon(Icons.notifications_outlined,
                 color: Color(0xff80cbc4)),

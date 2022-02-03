@@ -17,7 +17,6 @@ class VendorNetwork {
     await _getToken();
     final res = await http.get(Uri.parse(full_url),headers: _setHeaders());
 
-
     if (res.statusCode == 200) {
       var json = jsonDecode(res.body);
       List data = json['data'][id];
@@ -91,6 +90,61 @@ class VendorNetwork {
       var json = jsonDecode(res.body);
       List data = json['data'];
       return data.map((notifikasi) => new NotificationModel.fromJson(notifikasi)).toList();
+    } else {
+      throw Exception('Failed to fetch data');
+    }
+  }
+  //dipakai saat tidak login
+  Future<List<Vendor>> getVendorGlobal(id) async {
+    var full_url = API_URL+'/global/vendor/all';
+    final res = await http.get(Uri.parse(full_url));
+
+    if (res.statusCode == 200) {
+      var json = jsonDecode(res.body);
+      List data = json['data'][id];
+      if(data!=null){
+        return data.map((vendors) => new Vendor.fromJson(vendors)).toList();
+      } else {
+        return [];
+      }
+    } else {
+
+      throw Exception('Failed to fetch data');
+    }
+  }
+  Future<List<Vendor>> getThumbnailsGlobal() async {
+    var full_url = API_URL+'/thumbnails/vendor';
+    final res = await http.get(Uri.parse(full_url));
+
+    if (res.statusCode == 200) {
+      var json = jsonDecode(res.body);
+      List data = json['data'];
+      return data.map((vendors) => new Vendor.fromJson(vendors)).toList();
+    } else {
+      print(jsonDecode(res.body));
+      throw Exception('Failed to fetch data');
+    }
+  }
+  Future<List<Vendor>> getAllPaketLengkapGlobal() async {
+    var full_url = API_URL+'/global/vendor/lengkap';
+    final res = await http.get(Uri.parse(full_url));
+
+    if (res.statusCode == 200) {
+      var json = jsonDecode(res.body);
+      List data = json['data'];
+      return data.map((vendors) => new Vendor.fromJson(vendors)).toList();
+    } else {
+      print(jsonDecode(res.body));
+      throw Exception('Failed to fetch data');
+    }
+  }
+  Future<Vendor> getOneVendorGlobal(id) async {
+    var full_url = API_URL+'/global/vendor/detail/$id';
+    final res = await http.get(Uri.parse(full_url));
+    if (res.statusCode == 200) {
+      var json = jsonDecode(res.body);
+      var data = json['data'];
+      return new Vendor.fromJson(data);
     } else {
       throw Exception('Failed to fetch data');
     }

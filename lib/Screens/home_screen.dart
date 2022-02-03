@@ -12,7 +12,9 @@ import 'package:dream_wedding_app/Screens/daftar_catering.dart';
 import 'package:dream_wedding_app/Screens/daftar_makeup.dart';
 import 'package:dream_wedding_app/Screens/daftar_paket_lengkap.dart';
 import 'package:dream_wedding_app/Screens/detail_jasa_screen.dart';
+import 'package:dream_wedding_app/Screens/login_screen.dart';
 import 'package:dream_wedding_app/Screens/notifications.dart';
+import 'package:dream_wedding_app/Screens/register_screen.dart';
 import 'package:dream_wedding_app/Utils/constants.dart';
 import 'package:dream_wedding_app/Widgets/app_bar.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -23,6 +25,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,9 +35,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<List<Vendor>> futureTopThumbnails, futurePaketLengkap;
+  late Future<List<Vendor>> futureTopThumbnails, futurePaketLengkap, futureTopThumbnailsGlobal, futurePaketLengkapGlobal ;
   final formatCurrency = new NumberFormat.simpleCurrency(locale: 'id_ID');
-
+  bool isAuth = false;
+  void _checkIfLoggedIn() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+    if(token != null){
+      setState(() {
+        isAuth = true;
+      });
+    }
+  }
   late FirebaseMessaging messaging;
 
   @override
@@ -41,12 +54,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // TODO: implement initState
     super.initState();
-    futureTopThumbnails = VendorNetwork().getThumbnails();
-    futurePaketLengkap = VendorNetwork().getAllPaketLengkap();
+    _checkIfLoggedIn();
+      futureTopThumbnails = VendorNetwork().getThumbnails();
+      futurePaketLengkap = VendorNetwork().getAllPaketLengkap();
+      futureTopThumbnailsGlobal = VendorNetwork().getThumbnailsGlobal();
+      futurePaketLengkapGlobal = VendorNetwork().getAllPaketLengkapGlobal();
     messaging = FirebaseMessaging.instance;
-    messaging.getToken().then((value){
-      print(value);
-    });
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       showSimpleNotification(
         Text(event.notification!.title!, style:TextStyle(fontSize: 16, color: Color(0xff80cbc4))),
@@ -66,18 +79,53 @@ class _HomeScreenState extends State<HomeScreen> {
   int _current_bottom = 0;
 
   final CarouselController _controller = CarouselController();
+  void loginAlert() {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Anda harus login/daftar",
+      desc: "Untuk membuat pesanan Anda harus terdaftar sebagai customer",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Login",
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          ),
+          onPressed: () async {
+            Route route = MaterialPageRoute(
+                builder: (context) => LoginScreen());
+            Navigator.push(context, route);
+          },
+          color: Colors.green,
+        ),
+        DialogButton(
+          child: Text(
+            "Daftar",
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          ),
+          onPressed: () async {
+            Route route = MaterialPageRoute(
+                builder: (context) => RegisterScreen());
+            Navigator.push(context, route);
+          },
+          color: Colors.green,
+        )
+      ],
+    ).show();
 
+  }
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: BaseAppBar(
           appBar: AppBar(),
+          isAuth: isAuth
         ),
         body: ListView(children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               FutureBuilder<List<Vendor>>(
-                  future: futureTopThumbnails,
+                  future: isAuth==true ? futureTopThumbnails : futureTopThumbnailsGlobal,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       if(snapshot.data!.length>0){
@@ -96,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   MediaQuery
                                       .of(context)
                                       .size
-                                      .width * 1.9,
+                                      .width * 2,
                                   child:
                                   GridTile(
                                     header: GridTileBar(
@@ -154,58 +202,58 @@ class _HomeScreenState extends State<HomeScreen> {
                                             SizedBox(
                                                 height: 10
                                             ),
-                                            Row(
-                                                children: [
-                                                  if(double.parse(data.rating_mean)>0) ...[
-                                                    Text(
-                                                        '${formatCurrency
-                                                            .format(int.parse(
-                                                            data.harga))} | ',
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .white,
-                                                            fontSize: 15)),
-                                                    RatingBarIndicator(
-                                                      rating: double.parse(data.rating_mean),
-                                                      itemBuilder: (context,
-                                                          index) =>
-                                                          Icon(
-                                                            Icons.star,
-                                                            color: Colors
-                                                                .amber,
-                                                          ),
-                                                      itemCount: 5,
-                                                      itemSize: 15.0,
-                                                      direction: Axis.horizontal,
-                                                    ),
-                                                    Text(
-                                                      ' (${data.rating_mean})',
-                                                      style: TextStyle(
-                                                          color:
-                                                          Colors.yellow,
-                                                          fontWeight : FontWeight.bold,
-                                                          fontSize: 15),
-                                                    ),
-                                                  ]
-                                                  else
-                                                    ...[
+                                             Row(
+                                                  children: [
+                                                    if(double.parse(data.rating_mean)>0) ...[
                                                       Text(
                                                           '${formatCurrency
-                                                              .format(
-                                                              int.parse(data
-                                                                  .harga))} | ',
+                                                              .format(int.parse(
+                                                              data.harga))} | ',
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .white,
                                                               fontSize: 15)),
-                                                      Text('Belum dirating',
-                                                          style: TextStyle(
+                                                      RatingBarIndicator(
+                                                        rating: double.parse(data.rating_mean),
+                                                        itemBuilder: (context,
+                                                            index) =>
+                                                            Icon(
+                                                              Icons.star,
                                                               color: Colors
-                                                                  .white,
-                                                              fontSize: 13))
+                                                                  .amber,
+                                                            ),
+                                                        itemCount: 5,
+                                                        itemSize: 15.0,
+                                                        direction: Axis.horizontal,
+                                                      ),
+                                                      Text(
+                                                        ' (${data.rating_mean})',
+                                                        style: TextStyle(
+                                                            color:
+                                                            Colors.yellow,
+                                                            fontWeight : FontWeight.bold,
+                                                            fontSize: 13),
+                                                      ),
                                                     ]
-                                                ]
-                                            )
+                                                    else
+                                                      ...[
+                                                        Text(
+                                                            '${formatCurrency
+                                                                .format(
+                                                                int.parse(data
+                                                                    .harga))} | ',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 15)),
+                                                        Text('Belum dirating',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 10))
+                                                      ]
+                                                  ]
+                                              )
                                           ]),
                                       width: double.infinity,
                                       padding: EdgeInsets.symmetric(
@@ -297,11 +345,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           child:
                           GestureDetector(
                             onTap: () {
+                              isAuth == true ?
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => BookingList()),
-                              );
+                              ) : loginAlert();
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -602,7 +651,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               .size
                               .width * 1.9,
                           child: FutureBuilder<List<Vendor>>(
-                              future: futurePaketLengkap,
+                              future: isAuth==true ? futurePaketLengkap : futurePaketLengkapGlobal,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   return ListView.builder(
@@ -751,16 +800,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                               10.0),
                                                                         ),
                                                                         onPressed: () {
-                                                                          snapshot.data![index].is_ordered == 0 ?
-                                                                          Navigator.push(context, MaterialPageRoute(
+                                                                          if(isAuth==true){
+                                                                            snapshot.data![index].is_ordered == 0 ?
+                                                                            Navigator.push(context, MaterialPageRoute(
                                                                                 builder: (context) =>
                                                                                     BookingForm(vendor: snapshot.data![index])),) : null;
+                                                                          } else {
+                                                                            loginAlert();
+                                                                          }
+
                                                                         },
                                                                         padding:
                                                                         EdgeInsets
                                                                             .all(
                                                                             5.0),
-                                                                        color: snapshot.data![index].is_ordered == 0 ? Color(0xff80cbc4) : Colors.grey,
+                                                                        color: snapshot.data![index].is_ordered == 0  ? Color(0xff80cbc4) : Colors.grey,
                                                                         textColor: Colors
                                                                             .white,
                                                                         child: Text(
@@ -802,5 +856,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         )
     );
+
+
   }
 }

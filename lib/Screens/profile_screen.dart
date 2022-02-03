@@ -8,6 +8,7 @@ import 'package:dream_wedding_app/Screens/bantuan.dart';
 import 'package:dream_wedding_app/Screens/login_screen.dart';
 import 'package:dream_wedding_app/Screens/notifications.dart';
 import 'package:dream_wedding_app/Screens/profile_detail.dart';
+import 'package:dream_wedding_app/Screens/register_screen.dart';
 import 'package:dream_wedding_app/Screens/setting_screen.dart';
 import 'package:dream_wedding_app/Utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +23,21 @@ class ProfileScreen extends StatefulWidget {
 
 class ProfileScreenState extends State<ProfileScreen> {
   late Future<User> futureDetailUser;
+  bool isAuth = false;
+  void _checkIfLoggedIn() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+    if(token != null){
+      setState(() {
+        isAuth = true;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _checkIfLoggedIn();
     futureDetailUser = UserNetwork().getProfile();
   }
   @override
@@ -40,6 +52,7 @@ class ProfileScreenState extends State<ProfileScreen> {
           elevation: 0,
         ),
         body:
+        isAuth == true ?
         FutureBuilder<User>(
           future: futureDetailUser,
           builder: (context, snapshot) {
@@ -245,6 +258,76 @@ class ProfileScreenState extends State<ProfileScreen> {
             // By default, show a loading spinner.
             return const CircularProgressIndicator();
           },
+        ) : Center(
+          child: Padding(
+             padding : EdgeInsets.all(20),
+             child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.login,
+                        size: 100,
+                        color: Color(0xff80cbc4)),
+                    SizedBox(
+                        height : 10
+                    ),
+                   Text('Silahkan login atau daftar untuk melihat profil', style: TextStyle(fontSize: 20, fontWeight : FontWeight.bold, ), textAlign: TextAlign.center),
+                    SizedBox(
+                        height : 20
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginScreen()),
+                          );
+                        },
+                        child: Container(
+                          height: 50,
+                          margin: EdgeInsets.symmetric(horizontal: 50),
+                          decoration: BoxDecoration(
+                            color: Color(0xff80cbc4),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Text(
+                             'Login',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        )),
+                    SizedBox(
+                        height : 10
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => RegisterScreen()),
+                          );
+                        },
+                        child: Container(
+                          height: 50,
+                          margin: EdgeInsets.symmetric(horizontal: 50),
+                          decoration: BoxDecoration(
+                            color: Color(0xff80cbc4),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Daftar',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        )),
+
+                  ])
+          )
         )
 
     );
